@@ -3,7 +3,7 @@ import { TYPES } from '../const.js';
 import dayjs from 'dayjs';
 
 function createEditPointTemplate(point) {
-  const {basePrice, dateFrom, dateTo, destination, isFavorite, offers, type} = point;
+  const {basePrice, dateFrom, dateTo, destination, offers, type} = point;
   const pointTypeOffer = offers.find((offer) => offer.type === point.type);
 
   return (
@@ -90,7 +90,14 @@ function createEditPointTemplate(point) {
 
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">Chamonix-Mont-Blanc (usually shortened to Chamonix) is a resort area near the junction of France, Switzerland and Italy. At the base of Mont Blanc, the highest summit in the Alps, it's renowned for its skiing.</p>
+          <p class="event__destination-description">${destination.description}</p>
+
+          <div class="event__photos-container">
+            <div class="event__photos-tape">
+            ${destination.pictures.map((image) => `<img class="event__photo" src="${image.src}" alt="${image.description}">`).join('')}
+            </div>
+          </div>
+
         </section>
       </section>
     </form>
@@ -99,8 +106,12 @@ function createEditPointTemplate(point) {
 }
 
 export default class EditPointView {
+  constructor ({point}) {
+    this.point = point;
+  }
+
   getTemplate() {
-    return createEditPointTemplate();
+    return createEditPointTemplate(this.point);
   }
 
   getElement() {
