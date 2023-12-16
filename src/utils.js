@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-const DATE_FORMAT = 'DD/MM/YY h:mm A';
+const DATE_FORMAT = '';
 
 export function getRandomArrayElement(items) {
   return items[Math.floor(Math.random() * items.length)];
@@ -11,7 +11,12 @@ export function getRandomNumber(min = 10, max = 100) {
 }
 
 //функция по преобразованию даты от сервера в читабельный вид
-export function humanizePointDate(date) {
-  return date ? dayjs(date).format(DATE_FORMAT) : '';
+export function humanizePointDate(dueDate) {
+  return dueDate ? dayjs(dueDate).format(DATE_FORMAT) : '';
+}
+
+//функция подсчёта длительности от даты начала и конца
+export function calculateDuration(startDate, endDate) {
+  return dayjs(endDate).diff(startDate, 'd');
 }
 
