@@ -18,15 +18,17 @@ export default class BoardPresenter {
 
   init() {
     this.boardPoints = [...this.pointsModel.getPoints()];
+    this.offersList = [...this.pointsModel.getOffers()];
 
     render(new SortView(), this.listContainer);
     render(new FilterView(), this.filterContainer);
     render(this.listComponent, this.listContainer);
-    render(new EditPointView(), this.listComponent.getElement());
+    render(new EditPointView({point: this.boardPoints[0], offers: this.offersList}), this.listComponent.getElement());
 
 
-    for (let i = 0; i < this.boardPoints.length; i++) {
-      render(new PointView({task: this.boardPoints[i]}), this.listComponent.getElement());
+    for (let i = 1; i < this.boardPoints.length; i++) {
+      const offersForPoint = this.offersList.find((offer) => offer.type === this.boardPoints[i].type);
+      render(new PointView({point: this.boardPoints[i], offers: offersForPoint}), this.listComponent.getElement());
     }
   }
 }
