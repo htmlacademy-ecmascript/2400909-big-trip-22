@@ -6,8 +6,10 @@ const POINT_COUNT = 3;
 
 export default class PointsModel {
   points = Array.from({length: POINT_COUNT}, getRandomPoint);
-  offers = getRandomOffer();
-  destinations = getRandomDestination();
+  offers = Array.from({length: POINT_COUNT}, getRandomOffer);
+  destinations = Array.from({length: POINT_COUNT}, getRandomDestination);
+  //offers = getRandomOffer();
+  //destinations = getRandomDestination();
 
   getPoints() {
     return this.points;

@@ -1,4 +1,5 @@
 import { getRandomArrayElement } from '../utils.js';
+import { getRandomNumber } from '../utils.js';
 
 const mockDestinations = [
   {
@@ -7,7 +8,7 @@ const mockDestinations = [
     name: 'Chamonix',
     pictures: [
       {
-        src: `https://loremflickr.com/248/152?random=${getRandomArrayElement()}`,
+        src: `https://loremflickr.com/248/152?random=${getRandomNumber()}`,
         description: 'Chamonix'
       }
     ]
@@ -18,7 +19,7 @@ const mockDestinations = [
     name: 'Amsterdam',
     pictures: [
       {
-        src: `https://loremflickr.com/248/152?random=${getRandomArrayElement()}`,
+        src: `https://loremflickr.com/248/152?random=${getRandomNumber()}`,
         description: 'Amsterdam'
       }
     ]
@@ -29,7 +30,7 @@ const mockDestinations = [
     name: 'Geneva',
     pictures: [
       {
-        src: `https://loremflickr.com/248/152?random=${getRandomArrayElement()}`,
+        src: `https://loremflickr.com/248/152?random=${getRandomNumber()}`,
         description: 'Geneva'
       }
     ]
@@ -40,7 +41,7 @@ const mockDestinations = [
     name: 'Paris',
     pictures: [
       {
-        src: `https://loremflickr.com/248/152?random=${getRandomArrayElement()}`,
+        src: `https://loremflickr.com/248/152?random=${getRandomNumber()}`,
         description: 'Paris'
       }
     ]
@@ -51,7 +52,7 @@ const mockDestinations = [
     name: 'London',
     pictures: [
       {
-        src: `https://loremflickr.com/248/152?random=${getRandomArrayElement()}`,
+        src: `https://loremflickr.com/248/152?random=${getRandomNumber()}`,
         description: 'London'
       }
     ]
