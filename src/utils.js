@@ -19,9 +19,9 @@ export function humanizePointDate(dueDate) {
 export function calculateDuration(startDate, endDate) {
   const daysDiff = dayjs(endDate).diff(startDate, 'd');
   // eslint-disable-next-line no-undef
-  const hoursDiff = dayjs(dayjs(endDate),subtract(daysDiff, 'day')).diff(startDate, 'h');
+  const hoursDiff = dayjs(dayjs(endDate).subtract(daysDiff, 'day')).diff(startDate, 'h');
   // eslint-disable-next-line no-undef
-  const minutesDiff = dayjs(dayjs(endDate),subtract(daysDiff, 'day').subtract(hoursDiff, 'hour')).diff(startDate, 'm');
+  const minutesDiff = dayjs(dayjs(endDate).subtract(daysDiff, 'day').subtract(hoursDiff, 'hour')).diff(startDate, 'm');
 
   if (daysDiff === 0) {
     return `${hoursDiff}h ${minutesDiff}m`;
