@@ -2,8 +2,9 @@ import { createElement } from '../render.js';
 import { calculateDuration } from '../utils.js';
 import dayjs from 'dayjs';
 
-function createPointTemplate(point) {
+function createPointTemplate(point, typeOffers) {
   const {basePrice, dateFrom, dateTo, destination, isFavorite, offers, type} = point;
+  const pointOffers = typeOffers.filter((offer) => offers.includes(offer.id));
 
   return (
     `<li class="trip-events__item">
@@ -26,11 +27,14 @@ function createPointTemplate(point) {
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-        <li class="event__offer">
-          <span class="event__offer-title">${offers.title}</span>
-          &plus;&euro;&nbsp;
-          <span class="event__offer-price">${offers.price}</span>
-        </li>
+        ${pointOffers.map((offer) => (
+          `<li class="event__offer">
+            <span class="event__offer-title">${offer.title}</span>
+            &plus;&euro;&nbsp;
+            <span class="event__offer-price">${offer.price}</span>
+          </li>`
+        )).join('')}
+
       </ul>
       <button class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ''}" type="button">
         <span class="visually-hidden">Add to favorite</span>
@@ -47,12 +51,13 @@ function createPointTemplate(point) {
 }
 
 export default class PointView {
-  constructor({point}) {
+  constructor({point, offers}) {
     this.point = point;
+    this.typeOffers = offers;
   }
 
   getTemplate() {
-    return createPointTemplate(this.point);
+    return createPointTemplate(this.point, this.typeOffers);
   }
 
   getElement() {

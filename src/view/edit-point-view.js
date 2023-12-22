@@ -2,9 +2,12 @@ import { createElement } from '../render.js';
 import { TYPES } from '../const.js';
 import dayjs from 'dayjs';
 
-function createEditPointTemplate(point) {
-  const {basePrice, dateFrom, dateTo, destination, offers, type} = point;
-  const pointTypeOffer = offers.find((offer) => offer.type === point.type);
+//функция для верхнего регистра первой буквы в названии типа
+const upTitle = (title) => title[0].toUpperCase() + title.slice(1);
+
+function createEditPointTemplate(point, offersByType) {
+  const {basePrice, dateFrom, dateTo, destination, type, id} = point;
+  const pointTypeOffer = offersByType.find((offer) => offer.type === point.type);
 
   return (
     `<li class="trip-events__item">
@@ -34,7 +37,7 @@ function createEditPointTemplate(point) {
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-${id}">
-            ${type[0].toUpperCase()}
+            ${upTitle(type)}
           </label>
           <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destination.name}" list="destination-list-${id}">
           <datalist id="destination-list-${id}">
@@ -76,15 +79,15 @@ function createEditPointTemplate(point) {
 
               return (
                 `<div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offers.title}-${offers.id}" type="checkbox" name="event-offer-${offers.title}" ${checked}>
-                <label class="event__offer-label" for="event-offer-${offers.title}-${offers.id}">
-                  <span class="event__offer-title">${offers.title[0].toUpperCase()}</span>
+                <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title}-${offer.id}" type="checkbox" name="event-offer-${offer.title}" ${checked}>
+                <label class="event__offer-label" for="event-offer-${offer.title}-${offer.id}">
+                  <span class="event__offer-title">${upTitle(offer.title)}</span>
                   &plus;&euro;&nbsp;
-                  <span class="event__offer-price">${offers.price}</span>
+                  <span class="event__offer-price">${offer.price}</span>
                 </label>
               </div>`
               );
-              }).join('')
+            }).join('')
             }
 
           </div>
@@ -108,12 +111,13 @@ function createEditPointTemplate(point) {
 }
 
 export default class EditPointView {
-  constructor ({point}) {
+  constructor ({point, offers}) {
     this.point = point;
+    this.offersByType = offers;
   }
 
   getTemplate() {
-    return createEditPointTemplate(this.point);
+    return createEditPointTemplate(this.point, this.offersByType);
   }
 
   getElement() {

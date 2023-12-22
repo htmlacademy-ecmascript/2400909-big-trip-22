@@ -1,7 +1,7 @@
 import { getRandomArrayElement } from '../utils.js';
 import { getRandomNumber } from '../utils.js';
 
-const mockDestinations = [
+export const mockDestinations = [
   {
     id: 1,
     description: 'Chamonix, is a beautiful city, a true asian pearl, with crowded streets.',

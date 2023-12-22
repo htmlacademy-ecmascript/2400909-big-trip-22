@@ -27,7 +27,7 @@ export default class BoardPresenter {
 
 
     for (let i = 1; i < this.boardPoints.length; i++) {
-      const offersForPoint = this.offersList.find((offer) => offer.type === this.boardPoints[i].type);
+      const offersForPoint = this.offersList.find((offer) => offer.type === this.boardPoints[i].type).offers;
       render(new PointView({point: this.boardPoints[i], offers: offersForPoint}), this.listComponent.getElement());
     }
   }
