@@ -120,7 +120,7 @@ export default class EditPointView extends AbstractView {
     this.#offersByType = offers;
   }
 
-  getTemplate() {
+  get template() {
     return createEditPointTemplate(this.#point, this.#offersByType);
   }
 }
