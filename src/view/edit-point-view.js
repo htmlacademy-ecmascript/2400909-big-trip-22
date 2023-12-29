@@ -1,6 +1,6 @@
-import { createElement } from '../render.js';
 import { TYPES } from '../const.js';
 import dayjs from 'dayjs';
+import AbstractView from '../framework/view/abstract-view.js';
 
 //функция для верхнего регистра первой буквы в названии типа
 const upTitle = (title) => title[0].toUpperCase() + title.slice(1);
@@ -110,25 +110,17 @@ function createEditPointTemplate(point, offersByType) {
   );
 }
 
-export default class EditPointView {
+export default class EditPointView extends AbstractView {
+  #point = null;
+  #offersByType = null;
+
   constructor ({point, offers}) {
-    this.point = point;
-    this.offersByType = offers;
+    super();
+    this.#point = point;
+    this.#offersByType = offers;
   }
 
   getTemplate() {
-    return createEditPointTemplate(this.point, this.offersByType);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+    return createEditPointTemplate(this.#point, this.#offersByType);
   }
 }

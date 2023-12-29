@@ -8,27 +8,34 @@ import {render} from '../render.js';
 //const POINTS_COUNT = 3; заменили на this.boardPoints.length
 
 export default class BoardPresenter {
-  listComponent = new ListView();
+  #listContainer = null;
+  #filterContainer = null;
+  #pointsModel = null;
+
+  #listComponent = new ListView();
+
+  #boardPoints = [];
+  #offersList = [];
 
   constructor({listContainer, filterContainer, pointsModel}) {
-    this.listContainer = listContainer;
-    this.filterContainer = filterContainer;
-    this.pointsModel = pointsModel;
+    this.#listContainer = listContainer;
+    this.#filterContainer = filterContainer;
+    this.#pointsModel = pointsModel;
   }
 
   init() {
-    this.boardPoints = [...this.pointsModel.getPoints()];
-    this.offersList = [...this.pointsModel.getOffers()];
+    this.#boardPoints = [...this.#pointsModel.getPoints()];
+    this.#offersList = [...this.#pointsModel.getOffers()];
 
-    render(new SortView(), this.listContainer);
-    render(new FilterView(), this.filterContainer);
-    render(this.listComponent, this.listContainer);
-    render(new EditPointView({point: this.boardPoints[0], offers: this.offersList}), this.listComponent.getElement());
+    render(new SortView(), this.#listContainer);
+    render(new FilterView(), this.#filterContainer);
+    render(this.#listComponent, this.#listContainer);
+    render(new EditPointView({point: this.#boardPoints[0], offers: this.#offersList}), this.#listComponent.getElement());
 
 
-    for (let i = 1; i < this.boardPoints.length; i++) {
-      const offersForPoint = this.offersList.find((offer) => offer.type === this.boardPoints[i].type).offers;
-      render(new PointView({point: this.boardPoints[i], offers: offersForPoint}), this.listComponent.getElement());
+    for (let i = 1; i < this.#boardPoints.length; i++) {
+      const offersForPoint = this.#offersList.find((offer) => offer.type === this.#boardPoints[i].type).offers;
+      render(new PointView({point: this.#boardPoints[i], offers: offersForPoint}), this.#listComponent.getElement());
     }
   }
 }
