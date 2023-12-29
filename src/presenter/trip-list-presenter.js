@@ -4,6 +4,7 @@ import ListView from '../view/list-view.js';
 import PointView from '../view/point-view.js';
 import EditPointView from '../view/edit-point-view.js';
 import {render} from '../render.js';
+import { replace } from '../framework/render.js';
 
 //const POINTS_COUNT = 3; заменили на this.boardPoints.length
 
@@ -40,7 +41,39 @@ export default class BoardPresenter {
   }
 
   #renderPoint (point, offers) {
-    const pointComponent = new PointView({point, offers});
+    const escKeyDownHandler = (evt) => {
+      if (evt.key === 'Escape') {
+        evt.preventDefault();
+        replaceFormToPoint();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
+    };
+
+    const pointComponent = new PointView({
+      point,
+      offers,
+      onRollupClick: () => {
+        replacePointToForm();
+        document.addEventListener('keydown', escKeyDownHandler);
+      }
+    });
+
+    const pointEditComponent = new EditPointView({
+      point,
+      offers,
+      onFormSubmit: () => {
+        replaceFormToPoint();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
+    });
+
+    function replacePointToForm() {
+      replace(pointEditComponent, pointComponent);
+    }
+
+    function replaceFormToPoint() {
+      replace(pointComponent, pointEditComponent);
+    }
 
     render(pointComponent, this.#listComponent.element);
 
