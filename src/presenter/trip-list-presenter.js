@@ -5,6 +5,7 @@ import PointView from '../view/point-view.js';
 import EditPointView from '../view/edit-point-view.js';
 import { render } from '../render.js';
 import { replace } from '../framework/render.js';
+import NoEventView from '../view/list-empty-view.js';
 
 //const POINTS_COUNT = 3; заменили на this.boardPoints.length
 
@@ -73,6 +74,13 @@ export default class BoardPresenter {
     render(new SortView(), this.#listContainer);
     render(new FilterView(), this.#filterContainer);
     render(this.#listComponent, this.#listContainer);
+
+    //условие отрисовки заглушки при остутствии точек маршрута
+    if (this.#boardPoints.every((point) => point.isArchive)) {
+      render(new NoEventView(), this.#listComponent.element);
+      return;
+    }
+
     render(new EditPointView({point: this.#boardPoints[0], offers: this.#offersList}), this.#listComponent.element);
 
 

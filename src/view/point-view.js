@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { calculateDuration } from '../utils.js';
+import { calculateDuration } from '../utils/point.js';
 import dayjs from 'dayjs';
 
 function createPointTemplate(point, typeOffers) {
