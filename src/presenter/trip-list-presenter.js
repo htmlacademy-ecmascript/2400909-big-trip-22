@@ -3,8 +3,7 @@ import SortView from '../view/list-sort-view.js';
 import ListView from '../view/list-view.js';
 import PointView from '../view/point-view.js';
 import EditPointView from '../view/edit-point-view.js';
-import { render } from '../render.js';
-import { replace } from '../framework/render.js';
+import { render, replace } from '../framework/render.js';
 import NoEventView from '../view/list-empty-view.js';
 
 //const POINTS_COUNT = 3; заменили на this.boardPoints.length
