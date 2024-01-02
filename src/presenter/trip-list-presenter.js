@@ -3,17 +3,18 @@ import SortView from '../view/list-sort-view.js';
 import ListView from '../view/list-view.js';
 import PointView from '../view/point-view.js';
 import EditPointView from '../view/edit-point-view.js';
-import { render, replace } from '../framework/render.js';
+import ButtonNewEvent from '../view/button-new-event.js';
+import { render, replace, RenderPosition } from '../framework/render.js';
 import NoEventView from '../view/list-empty-view.js';
 
 //const POINTS_COUNT = 3; заменили на this.boardPoints.length
 
-export default class BoardPresenter {
+export default class TripPresenter {
   #listContainer = null;
   #filterContainer = null;
   #pointsModel = null;
-
   #listComponent = new ListView();
+  #buttonNewPoint = new ButtonNewEvent();
 
   #boardPoints = [];
   #offersList = [];
@@ -70,6 +71,7 @@ export default class BoardPresenter {
   }
 
   #renderBoard() {
+    render(this.#buttonNewPoint, this.#listComponent, RenderPosition.AFTEREND);
     render(new SortView(), this.#listContainer);
     render(new FilterView(), this.#filterContainer);
     render(this.#listComponent, this.#listContainer);

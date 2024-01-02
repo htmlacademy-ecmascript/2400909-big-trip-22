@@ -30,7 +30,7 @@
     "node": "20"
   },
   "dependencies": {
-    "@babel/core": "^7.21.4",
+    "@babel/core": "7.21.4",
     "copy-webpack-plugin": "11.0.0",
     "dayjs": "1.11.7",
     "html-webpack-plugin": "5.5.1"

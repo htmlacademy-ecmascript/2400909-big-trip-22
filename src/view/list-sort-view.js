@@ -31,9 +31,9 @@ function createSortTemplate(sortItems) {
 export default class SortView extends AbstractView {
   #sorts = null;
 
-  constructor ({sorts}) {
+  constructor ({sortItems}) {
     super();
-    this.#sorts = sorts;
+    this.#sorts = sortItems;
   }
 
   get template() {

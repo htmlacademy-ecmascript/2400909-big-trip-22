@@ -5,8 +5,9 @@ import AbstractView from '../framework/view/abstract-view.js';
 //функция для верхнего регистра первой буквы в названии типа
 const upTitle = (title) => title[0].toUpperCase() + title.slice(1);
 
-function createTypeTemplate(point) {
+function createTypeTemplate(point, destination) {
   const {id, type} = point;
+  const {name} = destination;
 
   return (
     `<div class="event__type-wrapper">
@@ -35,7 +36,7 @@ function createTypeTemplate(point) {
       <label class="event__label  event__type-output" for="event-destination-${id}">
         ${upTitle(type)}
       </label>
-      <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destination.name}" list="destination-list-${id}">
+      <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${name}" list="destination-list-${id}">
       <datalist id="destination-list-${id}">
         <option value="Amsterdam"></option>
         <option value="Geneva"></option>
