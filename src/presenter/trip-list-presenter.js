@@ -4,17 +4,19 @@ import ListView from '../view/list-view.js';
 import PointView from '../view/point-view.js';
 import EditPointView from '../view/edit-point-view.js';
 import ButtonNewEvent from '../view/button-new-event.js';
-import { render, replace, RenderPosition } from '../framework/render.js';
+import { render, replace, RenderPosition, remove} from '../framework/render.js';
 import NoEventView from '../view/list-empty-view.js';
-
-//const POINTS_COUNT = 3; заменили на this.boardPoints.length
 
 export default class TripPresenter {
   #listContainer = null;
-  #filterContainer = null;
   #pointsModel = null;
+  #filterContainer = null;
   #listComponent = new ListView();
+  #filterComponent = new FilterView();
+  #sortComponent = new SortView();
   #buttonNewPoint = new ButtonNewEvent();
+  #noEventComponent = new NoEventView();
+  #pointEdit = new EditPointView();
 
   #boardPoints = [];
   #offersList = [];
@@ -70,24 +72,52 @@ export default class TripPresenter {
     render(pointComponent, this.#listComponent.element);
   }
 
-  #renderBoard() {
-    render(this.#buttonNewPoint, this.#listComponent, RenderPosition.AFTEREND);
-    render(new SortView(), this.#listContainer);
-    render(new FilterView(), this.#filterContainer);
-    render(this.#listComponent, this.#listContainer);
+  #renderSort() {
+    render(this.#sortComponent, this.#listComponent.element, RenderPosition.AFTERBEGIN);
+  }
 
-    //условие отрисовки заглушки при остутствии точек маршрута
-    if (this.#boardPoints.every((point) => point.isArchive)) {
-      render(new NoEventView(), this.#listComponent.element);
-      return;
-    }
+  #renderPoints(from, to) {
+    this.#boardPoints
+      .slice(from, to)
+      .forEach((point, offers) => this.#renderPoint(point, offers));
+  }
 
-    render(new EditPointView({point: this.#boardPoints[0], offers: this.#offersList}), this.#listComponent.element);
+  #renderNoEvents() {
+    render(this.#noEventComponent, this.#listComponent.element, RenderPosition.AFTERBEGIN);
+  }
 
+  #renderFilters() {
+    render(this.#filterComponent, this.#filterContainer, RenderPosition.AFTERBEGIN);
+  }
+
+  #renderButtonNewPoint() {
+    render(this.#buttonNewPoint, this.#listComponent.element, RenderPosition.AFTERBEGIN);
+  }
+
+  #renderEditPoint() {
+    render(this.#pointEdit({point: this.#boardPoints[0], offers: this.#offersList}), this.#listComponent.element);
 
     for (let i = 1; i < this.#boardPoints.length; i++) {
       const offersForPoint = this.#offersList.find((offer) => offer.type === this.#boardPoints[i].type).offers;
       render(this.#renderPoint({point: this.#boardPoints[i], offers: offersForPoint}));
     }
+  }
+
+  #renderBoard() {
+    render(this.#listComponent, this.#listContainer);
+
+    //условие отрисовки заглушки при остутствии точек маршрута
+    if (this.#boardPoints.every((point) => point.isArchive)) {
+      this.#renderNoEvents();
+
+      return;
+    }
+
+    this.#renderSort();
+    this.#renderFilters();
+    this.#renderEditPoint();
+    this.#renderPoints();
+    this.#renderEditPoint();
+    this.#renderButtonNewPoint();
   }
 }
