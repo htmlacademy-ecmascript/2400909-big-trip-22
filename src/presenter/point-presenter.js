@@ -1,4 +1,4 @@
-import { render, replace } from '../framework/render';
+import { render, replace, remove } from '../framework/render';
 import PointView from '../view/point-view';
 import EditPointView from '../view/edit-point-view';
 
@@ -19,6 +19,9 @@ export default class PointPresenter {
     this.#point = point;
     this.#offers = offers;
 
+    const prevPointComponent = this.#pointComponent;
+    const prevPointEditComponent = this.#pointEditComponent;
+
     this.#pointComponent = new PointView({
       point: this.#point,
       offers: this.#offers,
@@ -31,7 +34,29 @@ export default class PointPresenter {
       onEditClick: this.#handleEditClick,
     });
 
-    render(this.#pointComponent, this.#listContainer);
+    if (prevPointComponent === null || prevPointEditComponent === null) {
+      render(this.#pointComponent, this.#listContainer);
+
+      return;
+    }
+
+    // Проверка на наличие в DOM необходима,
+    // чтобы не пытаться заменить то, что не было отрисовано
+    if (this.#listContainer.contains(prevPointComponent.element)) {
+      replace(this.#pointComponent, prevPointComponent);
+    }
+
+    if (this.#listContainer.contains(prevPointEditComponent.element)) {
+      replace(this.#pointEditComponent, prevPointEditComponent);
+    }
+
+    remove(prevPointComponent);
+    remove(prevPointEditComponent);
+  }
+
+  destroy() {
+    remove(this.#pointComponent);
+    remove(this.#pointEditComponent);
   }
 
   #replacePointToForm() {

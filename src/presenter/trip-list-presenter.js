@@ -5,6 +5,7 @@ import ButtonNewEvent from '../view/button-new-event.js';
 import { render, RenderPosition } from '../framework/render.js';
 import NoEventView from '../view/list-empty-view.js';
 import PointPresenter from './point-presenter.js';
+import EditPointView from '../view/edit-point-view.js';
 
 export default class TripPresenter {
   #listContainer = null;
@@ -15,6 +16,7 @@ export default class TripPresenter {
   #sortComponent = new SortView();
   #buttonNewPoint = new ButtonNewEvent();
   #noEventComponent = new NoEventView();
+  #pointEdit = new EditPointView();
 
   #boardPoints = [];
   #offersList = [];
