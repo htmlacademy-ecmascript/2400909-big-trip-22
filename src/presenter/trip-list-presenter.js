@@ -1,11 +1,10 @@
 import FilterView from '../view/list-filter-view.js';
 import SortView from '../view/list-sort-view.js';
 import ListView from '../view/list-view.js';
-import PointView from '../view/point-view.js';
-import EditPointView from '../view/edit-point-view.js';
 import ButtonNewEvent from '../view/button-new-event.js';
-import { render, replace, RenderPosition, remove} from '../framework/render.js';
+import { render, RenderPosition } from '../framework/render.js';
 import NoEventView from '../view/list-empty-view.js';
+import PointPresenter from './point-presenter.js';
 
 export default class TripPresenter {
   #listContainer = null;
@@ -16,7 +15,6 @@ export default class TripPresenter {
   #sortComponent = new SortView();
   #buttonNewPoint = new ButtonNewEvent();
   #noEventComponent = new NoEventView();
-  #pointEdit = new EditPointView();
 
   #boardPoints = [];
   #offersList = [];
@@ -35,41 +33,11 @@ export default class TripPresenter {
   }
 
   #renderPoint (point, offers) {
-    const escKeyDownHandler = (evt) => {
-      if (evt.key === 'Escape') {
-        evt.preventDefault();
-        replaceFormToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    };
-
-    const pointComponent = new PointView({
-      point,
-      offers,
-      onRollupClick: () => {
-        replacePointToForm();
-        document.addEventListener('keydown', escKeyDownHandler);
-      }
+    const pointPresenter = new PointPresenter({
+      listContainer: this.#listComponent.elememt,
     });
 
-    const pointEditComponent = new EditPointView({
-      point,
-      offers,
-      onFormSubmit: () => {
-        replaceFormToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    });
-
-    function replacePointToForm() {
-      replace(pointEditComponent, pointComponent);
-    }
-
-    function replaceFormToPoint() {
-      replace(pointComponent, pointEditComponent);
-    }
-
-    render(pointComponent, this.#listComponent.element);
+    pointPresenter.init(point, offers);
   }
 
   #renderSort() {
