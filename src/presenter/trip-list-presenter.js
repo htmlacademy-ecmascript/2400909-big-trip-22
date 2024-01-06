@@ -20,6 +20,7 @@ export default class TripPresenter {
 
   #boardPoints = [];
   #offersList = [];
+  #pointPresenter = new PointPresenter();
 
   constructor({listContainer, filterContainer, pointsModel}) {
     this.#listContainer = listContainer;
@@ -40,6 +41,7 @@ export default class TripPresenter {
     });
 
     pointPresenter.init(point, offers);
+    this.#pointPresenter.set(point.id, offers.id, pointPresenter);
   }
 
   #renderSort() {
@@ -71,6 +73,11 @@ export default class TripPresenter {
       const offersForPoint = this.#offersList.find((offer) => offer.type === this.#boardPoints[i].type).offers;
       render(this.#renderPoint({point: this.#boardPoints[i], offers: offersForPoint}));
     }
+  }
+
+  #clearPointList() {
+    this.#pointPresenter.forEach((presenter) => presenter.destroy());
+    this.#pointPresenter.clear();
   }
 
   #renderBoard() {
