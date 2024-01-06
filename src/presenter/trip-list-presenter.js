@@ -6,6 +6,7 @@ import { render, RenderPosition } from '../framework/render.js';
 import NoEventView from '../view/list-empty-view.js';
 import PointPresenter from './point-presenter.js';
 import EditPointView from '../view/edit-point-view.js';
+import { updateItem } from '../utils/common.js';
 
 export default class TripPresenter {
   #listContainer = null;
@@ -35,9 +36,15 @@ export default class TripPresenter {
     this.#renderBoard();
   }
 
+  #handlePointChange = (updatedPoint) => {
+    this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
+    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
+  };
+
   #renderPoint (point, offers) {
     const pointPresenter = new PointPresenter({
       listContainer: this.#listComponent.elememt,
+      onDataChange: this.#handlePointChange
     });
 
     pointPresenter.init(point, offers);
