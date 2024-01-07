@@ -13,8 +13,8 @@ export default class TripPresenter {
   #pointsModel = null;
   #filterContainer = null;
   #listComponent = new ListView();
-  #filterComponent = new FilterView();
-  #sortComponent = new SortView();
+  #filterComponent = null;
+  #sortComponent = null;
   #buttonNewPoint = new ButtonNewEvent();
   #noEventComponent = new NoEventView();
   #pointEdit = new EditPointView();
@@ -56,7 +56,14 @@ export default class TripPresenter {
     this.#pointPresenter.set(point.id, offers.id, pointPresenter);
   }
 
+  #handleSortTypeChange = (sortType) => {
+    // - сортируем задачи
+    // - очищаем список
+    // - рендерим список заново
+  }
+
   #renderSort() {
+    this.#sortComponent = new SortView({onSortTypeChange: this.#handleSortTypeChange});
     render(this.#sortComponent, this.#listComponent.element, RenderPosition.AFTERBEGIN);
   }
 
@@ -70,7 +77,14 @@ export default class TripPresenter {
     render(this.#noEventComponent, this.#listComponent.element, RenderPosition.AFTERBEGIN);
   }
 
+  #handleFilterTypeChange = (filterType) => {
+    // - сортируем задачи
+    // - очищаем список
+    // - рендерим список заново
+  }
+
   #renderFilters() {
+    this.#filterComponent = new FilterView({onFilterChange: this.#handleFilterTypeChange});
     render(this.#filterComponent, this.#filterContainer, RenderPosition.AFTERBEGIN);
   }
 
