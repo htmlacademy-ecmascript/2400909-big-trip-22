@@ -7,6 +7,7 @@ import NoEventView from '../view/list-empty-view.js';
 import PointPresenter from './point-presenter.js';
 import EditPointView from '../view/edit-point-view.js';
 import { updateItem } from '../utils/common.js';
+import { FilterType, SortType } from '../const.js';
 
 export default class TripPresenter {
   #listContainer = null;
@@ -21,7 +22,10 @@ export default class TripPresenter {
 
   #boardPoints = [];
   #offersList = [];
-  #pointPresenter = new PointPresenter();
+  #pointPresenter = new Map();
+  #currentFilterType = FilterType.EVERYTHING;
+  #currentSortType = SortType.DAY;
+  #sourcedBoardPoints = [];
 
   constructor({listContainer, filterContainer, pointsModel}) {
     this.#listContainer = listContainer;
@@ -32,6 +36,10 @@ export default class TripPresenter {
   init() {
     this.#boardPoints = [...this.#pointsModel.points];
     this.#offersList = [...this.#pointsModel.offers];
+    // 1. В отличии от сортировки по любому параметру,
+    // исходный порядок можно сохранить только одним способом -
+    // сохранив исходный массив:
+    this.#sourcedBoardPoints = [...this.#pointsModel.points];
 
     this.#renderBoard();
   }
@@ -42,6 +50,7 @@ export default class TripPresenter {
 
   #handlePointChange = (updatedPoint) => {
     this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
+    this.#sourcedBoardPoints = updateItem(this.#sourcedBoardPoints, updatedPoint);
     this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
   };
 
@@ -56,11 +65,28 @@ export default class TripPresenter {
     this.#pointPresenter.set(point.id, offers.id, pointPresenter);
   }
 
+  #sortPoints(sortType) {
+    // 2. Этот исходный массив задач необходим,
+    // потому что для сортировки мы будем мутировать
+    // массив в свойстве _boardTasks
+
+    // 3. А когда пользователь захочет "вернуть всё, как было",
+    // мы просто запишем в _boardTasks исходный массив
+    //this.#boardPoints = [...this.#sourcedBoardPoints];
+
+    this.#currentSortType = sortType;
+  }
+
   #handleSortTypeChange = (sortType) => {
     // - сортируем задачи
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortComponent(sortType);
     // - очищаем список
     // - рендерим список заново
-  }
+  };
 
   #renderSort() {
     this.#sortComponent = new SortView({onSortTypeChange: this.#handleSortTypeChange});
@@ -77,11 +103,29 @@ export default class TripPresenter {
     render(this.#noEventComponent, this.#listComponent.element, RenderPosition.AFTERBEGIN);
   }
 
+  //объект для фильтров
+  #filterPoints(filterType) {
+    // 2. Этот исходный массив задач необходим,
+    // потому что для сортировки мы будем мутировать
+    // массив в свойстве _boardTasks
+
+    // 3. А когда пользователь захочет "вернуть всё, как было",
+    // мы просто запишем в _boardTasks исходный массив
+    //this.#boardPoints = [...this.#sourcedBoardPoints];
+
+    this.#currentFilterType = filterType;
+  }
+
   #handleFilterTypeChange = (filterType) => {
     // - сортируем задачи
+    if (this.#currentFilterType === filterType) {
+      return;
+    }
+
+    this.#filterPoints(filterType);
     // - очищаем список
     // - рендерим список заново
-  }
+  };
 
   #renderFilters() {
     this.#filterComponent = new FilterView({onFilterChange: this.#handleFilterTypeChange});
