@@ -26,6 +26,7 @@ export function calculateDuration(startDate, endDate) {
   return `${daysDiff}D ${hoursDiff}h ${minutesDiff}m`;
 }
 
+
 // Функция помещает задачи без даты в конце списка,
 // возвращая нужный вес для колбэка sort
 /* function getWeightForNullDate(dateA, dateB) {

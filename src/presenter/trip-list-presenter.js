@@ -8,6 +8,7 @@ import PointPresenter from './point-presenter.js';
 import EditPointView from '../view/edit-point-view.js';
 import { updateItem } from '../utils/common.js';
 import { FilterType, SortType } from '../const.js';
+import { sortByPrice, sortByTime } from '../utils/filter.js';
 
 export default class TripPresenter {
   #listContainer = null;
@@ -69,10 +70,18 @@ export default class TripPresenter {
     // 2. Этот исходный массив задач необходим,
     // потому что для сортировки мы будем мутировать
     // массив в свойстве _boardTasks
-
-    // 3. А когда пользователь захочет "вернуть всё, как было",
-    // мы просто запишем в _boardTasks исходный массив
-    //this.#boardPoints = [...this.#sourcedBoardPoints];
+    switch (sortType) {
+      case SortType.TIME:
+        this.#boardPoints.sort(sortByTime);
+        break;
+      case SortType.PRICE:
+        this.#boardPoints.sort(sortByPrice);
+        break;
+      default:
+      // 3. А когда пользователь захочет "вернуть всё, как было",
+      // мы просто запишем в _boardTasks исходный массив
+        this.#boardPoints = [...this.#sourcedBoardPoints];
+    }
 
     this.#currentSortType = sortType;
   }
@@ -83,7 +92,7 @@ export default class TripPresenter {
       return;
     }
 
-    this.#sortComponent(sortType);
+    this.#sortPoints(sortType);
     // - очищаем список
     // - рендерим список заново
   };
@@ -124,7 +133,9 @@ export default class TripPresenter {
 
     this.#filterPoints(filterType);
     // - очищаем список
+    this.#clearPointList();
     // - рендерим список заново
+    this.#renderBoard();
   };
 
   #renderFilters() {
