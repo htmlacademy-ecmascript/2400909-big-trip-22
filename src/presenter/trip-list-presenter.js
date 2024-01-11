@@ -5,7 +5,7 @@ import ButtonNewEvent from '../view/button-new-event.js';
 import { render, RenderPosition } from '../framework/render.js';
 import NoEventView from '../view/list-empty-view.js';
 import PointPresenter from './point-presenter.js';
-import EditPointView from '../view/edit-point-view.js';
+//import EditPointView from '../view/edit-point-view.js';
 import { updateItem } from '../utils/common.js';
 import { FilterType, SortType } from '../const.js';
 import { sortByPrice, sortByTime } from '../utils/filter.js';
@@ -19,10 +19,11 @@ export default class TripPresenter {
   #sortComponent = null;
   #buttonNewPoint = new ButtonNewEvent();
   #noEventComponent = new NoEventView();
-  #pointEdit = new EditPointView();
+  #pointEdit = null;
 
   #boardPoints = [];
   #offersList = [];
+  #destinationsList = [];
   #pointPresenter = new Map();
   #currentFilterType = FilterType.EVERYTHING;
   #currentSortType = SortType.DAY;
@@ -37,6 +38,7 @@ export default class TripPresenter {
   init() {
     this.#boardPoints = [...this.#pointsModel.points];
     this.#offersList = [...this.#pointsModel.offers];
+    this.#destinationsList = [...this.#pointsModel.destinations];
     // 1. В отличии от сортировки по любому параметру,
     // исходный порядок можно сохранить только одним способом -
     // сохранив исходный массив:
@@ -52,18 +54,18 @@ export default class TripPresenter {
   #handlePointChange = (updatedPoint) => {
     this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
     this.#sourcedBoardPoints = updateItem(this.#sourcedBoardPoints, updatedPoint);
-    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
+    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint, this.#offersList, this.#destinationsList);
   };
 
-  #renderPoint (point, offers) {
+  #renderPoint (point, offers, destinations) {
     const pointPresenter = new PointPresenter({
-      listContainer: this.#listComponent.elememt,
+      listContainer: this.#listComponent.element,
       onDataChange: this.#handlePointChange,
       onModeChange: this.#handleModeChange,
     });
 
-    pointPresenter.init(point, offers);
-    this.#pointPresenter.set(point.id, offers.id, pointPresenter);
+    pointPresenter.init(point, offers, destinations);
+    this.#pointPresenter.set(point.id, pointPresenter);
   }
 
   #sortPoints(sortType) {
@@ -94,7 +96,9 @@ export default class TripPresenter {
 
     this.#sortPoints(sortType);
     // - очищаем список
+    this.#clearPointList();
     // - рендерим список заново
+    this.#renderBoard();
   };
 
   #renderSort() {
@@ -102,10 +106,9 @@ export default class TripPresenter {
     render(this.#sortComponent, this.#listComponent.element, RenderPosition.AFTERBEGIN);
   }
 
-  #renderPoints(from, to) {
+  #renderPoints() {
     this.#boardPoints
-      .slice(from, to)
-      .forEach((point, offers) => this.#renderPoint(point, offers));
+      .forEach((point) => this.#renderPoint(point, this.#offersList, this.#destinationsList));
   }
 
   #renderNoEvents() {
@@ -143,18 +146,19 @@ export default class TripPresenter {
     render(this.#filterComponent, this.#filterContainer, RenderPosition.AFTERBEGIN);
   }
 
-  #renderButtonNewPoint() {
+  /* #renderButtonNewPoint() {
     render(this.#buttonNewPoint, this.#listComponent.element, RenderPosition.AFTERBEGIN);
   }
-
-  #renderEditPoint() {
-    render(this.#pointEdit({point: this.#boardPoints[0], offers: this.#offersList}), this.#listComponent.element);
+ */
+/*   #renderEditPoint() {
+    this.#pointEdit = new EditPointView({point: this.#boardPoints[0], offersByType: this.#offersList, destinations: this.#destinationsList});
+    render(this.#pointEdit, this.#listComponent.element);
 
     for (let i = 1; i < this.#boardPoints.length; i++) {
       const offersForPoint = this.#offersList.find((offer) => offer.type === this.#boardPoints[i].type).offers;
       render(this.#renderPoint({point: this.#boardPoints[i], offers: offersForPoint}));
     }
-  }
+  } */
 
   #clearPointList() {
     this.#pointPresenter.forEach((presenter) => presenter.destroy());
@@ -173,9 +177,8 @@ export default class TripPresenter {
 
     this.#renderSort();
     this.#renderFilters();
-    this.#renderEditPoint();
+   //this.#renderEditPoint();
     this.#renderPoints();
-    this.#renderEditPoint();
-    this.#renderButtonNewPoint();
+    //this.#renderButtonNewPoint();
   }
 }

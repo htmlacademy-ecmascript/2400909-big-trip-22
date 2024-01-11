@@ -5,9 +5,9 @@ import AbstractView from '../framework/view/abstract-view.js';
 //функция для верхнего регистра первой буквы в названии типа
 const upTitle = (title) => title[0].toUpperCase() + title.slice(1);
 
-function createTypeTemplate(point, destination) {
+function createTypeTemplate(point, destinations) {
   const {id, type} = point;
-  const {name} = destination;
+  //const {name} = destinations;
 
   return (
     `<div class="event__type-wrapper">
@@ -123,8 +123,8 @@ function createOfferTemplate(point, offersByType) {
   return '';
 }
 
-function createDestinationTemplate(destination) {
-  const {description, pictures} = destination;
+function createDestinationTemplate(destinations) {
+  const {description, pictures} = destinations;
 
   if (pictures.length === 0) {
     return '';
@@ -141,7 +141,7 @@ function createDestinationTemplate(destination) {
   );
 }
 
-function createEditPointTemplate({point, offersByType, destination}) {
+function createEditPointTemplate({point, offersByType, destinations}) {
   return (
     `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -168,7 +168,7 @@ function createEditPointTemplate({point, offersByType, destination}) {
 
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            ${createDestinationTemplate(destination)}
+           <!-- {createDestinationTemplate(destinations)}-->
 
         </section>
       </section>
@@ -180,18 +180,22 @@ function createEditPointTemplate({point, offersByType, destination}) {
 export default class EditPointView extends AbstractView {
   #stat = null;
   #handleFormSubmit = null;
+  #handleViewClick = null;
 
-  constructor ({point, offersByType, destination, onFormSubmit}) {
+  constructor ({point, offersByType, destinations, onFormSubmit, onViewClick}) {
     super();
     this.#stat = {
       point,
       offersByType,
-      destination,
+      destinations,
     };
     this.#handleFormSubmit = onFormSubmit;
+    this.#handleViewClick = onViewClick;
 
     this.element.querySelector('form')
       .addEventListener('submit', this.#formSubmitHadler);
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('submit', this.#rollupClickHandler);
   }
 
   get template() {
@@ -200,6 +204,12 @@ export default class EditPointView extends AbstractView {
 
   #formSubmitHadler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(this.#stat); //возможно, нужно присвоеть this для point, offersByType, destination
+    this.#handleFormSubmit(this.#stat.point); //возможно, нужно присвоеть this для point, offersByType, destination
   };
+
+  #rollupClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleViewClick();
+  };
+
 }
