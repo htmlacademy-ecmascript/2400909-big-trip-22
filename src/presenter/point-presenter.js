@@ -18,7 +18,7 @@ export default class PointPresenter {
   #point = null;
   #offers = null;
   #destinations = null;
-  #mode = null;
+  #mode = Mode.DEFAULT;
 
   constructor({listContainer, onDataChange, onModeChange}) {
     this.#listContainer = listContainer;
@@ -81,9 +81,9 @@ export default class PointPresenter {
   }
 
   #replacePointToForm() {
+    this.#handleModeChange();
     replace(this.#pointEditComponent, this.#pointComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
-    this.#handleModeChange();
     this.#mode = Mode.EDITING;
   }
 
@@ -101,11 +101,11 @@ export default class PointPresenter {
   };
 
   #handleEditClick = () => {
-    this.#replaceFormToPoint();
+    this.#replacePointToForm();
   };
 
   #handleViewClick = () => {
-    this.#replacePointToForm();
+    this.#replaceFormToPoint();
   };
 
   #handleFavoriteClick = () => {
