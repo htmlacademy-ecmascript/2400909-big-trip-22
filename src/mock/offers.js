@@ -1,5 +1,5 @@
-import { getRandomArrayElement } from '../utils.js';
-import { getRandomNumber } from '../utils.js';
+import { getRandomArrayElement } from '../utils/common.js';
+import { getRandomNumber } from '../utils/common.js';
 
 export const mockOffers = [
   {
