@@ -1,13 +1,13 @@
 import { TYPES } from '../const.js';
 import dayjs from 'dayjs';
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 
 //функция для верхнего регистра первой буквы в названии типа
 const upTitle = (title) => title[0].toUpperCase() + title.slice(1);
 
-function createTypeTemplate(point, destination) {
+function createTypeTemplate(point, currentDestination, destinations) {
   const {id, type} = point;
-  const {name} = destination;
+  const {name} = currentDestination;
 
   return (
     `<div class="event__type-wrapper">
@@ -38,9 +38,9 @@ function createTypeTemplate(point, destination) {
       </label>
       <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${name}" list="destination-list-${id}">
       <datalist id="destination-list-${id}">
-        <option value="Amsterdam"></option>
-        <option value="Geneva"></option>
-        <option value="Chamonix"></option>
+        ${destinations.map((destination) => (
+          `<option value="${destination.name}"></option>`
+        )).join('')}
       </datalist>
     </div>`
   );
@@ -52,10 +52,10 @@ function createDateTemplate(point) {
   return (
     `
       <label class="visually-hidden" for="event-start-time-${id}">From</label>
-      <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${dayjs(dateFrom).format('DD/MM/YY h:mm A')}">
+      <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${dayjs(dateFrom).format('DD/MM/YY h:mm')}">
       &mdash;
       <label class="visually-hidden" for="event-end-time-${id}">To</label>
-      <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${dayjs(dateTo).format('DD/MM/YY h:mm A')}">
+      <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${dayjs(dateTo).format('DD/MM/YY h:mm')}">
     `
   );
 }
@@ -123,8 +123,8 @@ function createOfferTemplate(point, offersByType) {
   return '';
 }
 
-function createDestinationTemplate(destination) {
-  const {description, pictures} = destination;
+function createDestinationTemplate(currentDestination) {
+  const {description, pictures} = currentDestination;
 
   if (pictures.length === 0) {
     return '';
@@ -141,12 +141,13 @@ function createDestinationTemplate(destination) {
   );
 }
 
-function createEditPointTemplate({point, offersByType, destination}) {
+function createEditPointTemplate({point, offersByType, destinations}) {
+  const currentDestination = destinations.find((dest) => dest.id === point.destination);
   return (
     `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
       <header class="event__header">
-        ${createTypeTemplate(point)}
+        ${createTypeTemplate(point, currentDestination, destinations)}
 
         <div class="event__field-group  event__field-group--time">
           ${createDateTemplate(point)}
@@ -168,7 +169,7 @@ function createEditPointTemplate({point, offersByType, destination}) {
 
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            ${createDestinationTemplate(destination)}
+           ${createDestinationTemplate(currentDestination)}
 
         </section>
       </section>
@@ -177,21 +178,25 @@ function createEditPointTemplate({point, offersByType, destination}) {
   );
 }
 
-export default class EditPointView extends AbstractView {
+export default class EditPointView extends AbstractStatefulView {
   #stat = null;
   #handleFormSubmit = null;
+  #handleViewClick = null;
 
-  constructor ({point, offersByType, destination, onFormSubmit}) {
+  constructor ({point, offersByType, destinations, onFormSubmit, onViewClick}) {
     super();
     this.#stat = {
       point,
       offersByType,
-      destination,
+      destinations,
     };
     this.#handleFormSubmit = onFormSubmit;
+    this.#handleViewClick = onViewClick;
 
     this.element.querySelector('form')
-    .addEventListener('submit', this.#formSubmitHadler);
+      .addEventListener('submit', this.#formSubmitHadler);
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#rollupClickHandler);
   }
 
   get template() {
@@ -200,6 +205,12 @@ export default class EditPointView extends AbstractView {
 
   #formSubmitHadler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(this.#stat.point);
   };
+
+  #rollupClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleViewClick();
+  };
+
 }

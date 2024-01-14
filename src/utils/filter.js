@@ -1,8 +1,21 @@
-import { FilterType, SortType } from '../const.js';
 import dayjs from 'dayjs';
-import { calculateDuration } from '../utils/point.js';
 
-const filter = {
+export function sortByPrice (eventA, eventB) {
+  return eventA.basePrice - eventB.basePrice;
+}
+
+export function sortByTime(eventA, eventB) {
+  const eventADuration = getEventDuration(eventA);
+  const eventBDuration = getEventDuration(eventB);
+
+  return eventBDuration - eventADuration;
+}
+
+export function getEventDuration(event) {
+  return dayjs(event.dateTo).diff(dayjs(event.dateFrom));
+}
+
+/* const filter = {
   [FilterType.EVERYTHING]: (points) => points,
   [FilterType.FUTURE]: (points) => points.filter((point) => dayjs().isBefore(dayjs(point.dateFrom))),
   [FilterType.PRESENT]: (points) => points.filter((point) => dayjs().isSameOrAfter(dayjs(point.dateFrom)) && dayjs().isSameOrBefore(dayjs(point.dateTo))),
@@ -15,4 +28,4 @@ const sort = {
   [SortType.TIME]: (points) => points.sort((first, second) => calculateDuration(second.dateFrom, second.dateTo, true) - calculateDuration(first.dateFrom, first.dateTo, true))
 };
 
-export { filter, sort };
+export { filter, sort }; */

@@ -2,9 +2,11 @@ import AbstractView from '../framework/view/abstract-view.js';
 import { calculateDuration } from '../utils/point.js';
 import dayjs from 'dayjs';
 
-function createPointTemplate(point, typeOffers) {
+function createPointTemplate(point, offersByType, destinations) {
   const {basePrice, dateFrom, dateTo, destination, isFavorite, offers, type} = point;
+  const typeOffers = offersByType.find((offerByType) => offerByType.type === type)?.offers || [];
   const pointOffers = typeOffers.filter((offer) => offers.includes(offer.id));
+  const currentDestination = destinations.find((dest) => dest.id === destination);
 
   return (
     `<li class="trip-events__item">
@@ -13,12 +15,12 @@ function createPointTemplate(point, typeOffers) {
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${type} ${destination.name}</h3>
+      <h3 class="event__title">${type} ${currentDestination.name}</h3>
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="${dayjs(dateFrom).format('YYYY-MM-DD')}">${dayjs(dateFrom).format('hh:mm A')}</time>
+          <time class="event__start-time" datetime="${dayjs(dateFrom).format('YYYY-MM-DD')}">${dayjs(dateFrom).format('hh:mm')}</time>
           &mdash;
-          <time class="event__end-time" datetime="${dayjs(dateTo).format('YYYY-MM-DD')}">${dayjs(dateTo).format('hh:mm A')}</time>
+          <time class="event__end-time" datetime="${dayjs(dateTo).format('YYYY-MM-DD')}">${dayjs(dateTo).format('hh:mm')}</time>
         </p>
         <p class="event__duration">${calculateDuration(dateFrom, dateTo)}</p>
       </div>
@@ -52,25 +54,37 @@ function createPointTemplate(point, typeOffers) {
 
 export default class PointView extends AbstractView {
   #point = null;
-  #typeOffers = null;
-  #handleRollupClick = null;
+  #offersByType = [];
+  #destinations = [];
+  #handleEditClick = null;
+  #handleFavoriteClick = null;
 
-  constructor({point, offers, onEditClick: onRollupClick}) {
+
+  constructor({point, offersByType, destinations, onEditClick, onFavoriteClick}) {
     super();
     this.#point = point;
-    this.#typeOffers = offers;
-    this.#handleRollupClick = onRollupClick;
+    this.#offersByType = offersByType;
+    this.#destinations = destinations;
+    this.#handleEditClick = onEditClick;
+    this.#handleFavoriteClick = onFavoriteClick;
 
     this.element.querySelector('.event__rollup-btn')
-    .addEventListener('click', this.#rollupClickHandler);
+      .addEventListener('click', this.#rollupClickHandler);
+    this.element.querySelector('.event__favorite-btn')
+      .addEventListener('click', this.#favoriteClickHandle);
   }
 
   get template() {
-    return createPointTemplate(this.#point, this.#typeOffers);
+    return createPointTemplate(this.#point, this.#offersByType, this.#destinations);
   }
 
   #rollupClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleRollupClick();
+    this.#handleEditClick();
+  };
+
+  #favoriteClickHandle = (evt) => {
+    evt.preventDefault();
+    this.#handleFavoriteClick();
   };
 }
