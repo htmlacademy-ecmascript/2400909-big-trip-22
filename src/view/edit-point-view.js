@@ -244,7 +244,7 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
 
-  #typeChangeHandler = (evt) => {
+ /*  #typeChangeHandler = (evt) => {
     this.updateElement({point: {...this._state.point, type: evt.target.value, offers: []}});
   };
 
@@ -258,6 +258,6 @@ export default class EditPointView extends AbstractStatefulView {
     const checkedBoxes = Array.from(this.element.querySelectorAll('.event__offer-checkbox:checked'));
 
     this._state({point: {...this._state.point, offers: checkedBoxes.map((element) => element.dataset.offersByType)}});
-  };
+  }; */
 
 }
