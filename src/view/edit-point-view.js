@@ -5,6 +5,22 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 //функция для верхнего регистра первой буквы в названии типа
 const upTitle = (title) => title[0].toUpperCase() + title.slice(1);
 
+function createListDestinationsTemplate(destinations) {
+  const {name} = destinations;
+
+  if(!name) {
+    return '';
+  }
+
+  return (
+    `<datalist id="destination-list-1">
+        ${destinations.map((destination) => (
+          `<option value="${destination.name}"></option>`
+        )).join('')}
+      </datalist>`
+  );
+}
+
 function createTypeTemplate(point, currentDestination, destinations) {
   const {id, type} = point;
   const {name} = currentDestination;
@@ -24,7 +40,7 @@ function createTypeTemplate(point, currentDestination, destinations) {
        ${TYPES.map((eventType) => (
           `<div class="event__type-item">
           <input id="event-type-${eventType}-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}">
-          <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-${id}">${eventType[0].toUpperCase()}</label>
+          <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-${id}">${upTitle(eventType)}</label>
           </div>`
         )).join('')}
 
@@ -36,12 +52,10 @@ function createTypeTemplate(point, currentDestination, destinations) {
       <label class="event__label  event__type-output" for="event-destination-${id}">
         ${upTitle(type)}
       </label>
-      <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${name}" list="destination-list-${id}">
-      <datalist id="destination-list-${id}">
-        ${destinations.map((destination) => (
-          `<option value="${destination.name}"></option>`
-        )).join('')}
-      </datalist>
+      <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination"
+        value="${destinations ? name : ''}"
+      list="destination-list-${id}">
+      ${createListDestinationsTemplate(destinations)}
     </div>`
   );
 }
@@ -203,6 +217,22 @@ export default class EditPointView extends AbstractStatefulView {
     return createEditPointTemplate(this.#stat);
   }
 
+  //HANDLERS
+  /* _restoreHandlers = () => {
+    this.element.querySelector('form')
+      .addEventListener('submit', this.#formSubmitHadler);
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#rollupClickHandler);
+    this.element.querySelector('.event__type-group')
+      .addEventListener('change', this.#typeChangeHandler);
+    this.element.querySelector('.event__input--destination')
+      .addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('.event__input--price')
+      .addEventListener('change', this.#priceChangeHandler);
+    this.element.querySelector('.event__available-offers')
+      .addEventListener('change', this.#offerChangeHandler);
+  } */
+
   #formSubmitHadler = (evt) => {
     evt.preventDefault();
     this.#handleFormSubmit(this.#stat.point);
@@ -211,6 +241,23 @@ export default class EditPointView extends AbstractStatefulView {
   #rollupClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleViewClick();
+  };
+
+
+  #typeChangeHandler = (evt) => {
+    this.updateElement({point: {...this._state.point, type: evt.target.value, offers: []}});
+  };
+
+  #destinationChangeHandler = (evt) => {
+    const selectedDestination = this.destinations.find((dest) => dest.name === evt.target.value);
+    const selectedDestinationById = (selectedDestination) ? selectedDestination.id : null;
+    this.updateElement({point: {...this._state.point, destination: selectedDestinationById}});
+  };
+
+  #offerChangeHandler = () => {
+    const checkedBoxes = Array.from(this.element.querySelectorAll('.event__offer-checkbox:checked'));
+
+    this._state({point: {...this._state.point, offers: checkedBoxes.map((element) => element.dataset.offersByType)}});
   };
 
 }
