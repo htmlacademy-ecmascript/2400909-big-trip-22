@@ -5,15 +5,10 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 //функция для верхнего регистра первой буквы в названии типа
 const upTitle = (title) => title[0].toUpperCase() + title.slice(1);
 
-function createListDestinationsTemplate(destinations) {
-  const {name} = destinations;
-
-  if(!name) {
-    return '';
-  }
+function createListDestinationsTemplate(destinations, id) {
 
   return (
-    `<datalist id="destination-list-1">
+    `<datalist id="destination-list-${id}">
         ${destinations.map((destination) => (
           `<option value="${destination.name}"></option>`
         )).join('')}
@@ -55,7 +50,7 @@ function createTypeTemplate(point, currentDestination, destinations) {
       <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination"
         value="${destinations ? name : ''}"
       list="destination-list-${id}">
-      ${createListDestinationsTemplate(destinations)}
+      ${createListDestinationsTemplate(destinations, id)}
     </div>`
   );
 }
