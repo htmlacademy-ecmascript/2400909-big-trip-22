@@ -173,12 +173,12 @@ function createEditPointTemplate({point, offersByType, destinations}) {
       <section class="event__details">
         <section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-            ${createOfferTemplate(point, offersByType)}
+            ${offersByType.length !== 0 ? createOfferTemplate(point, offersByType) : ''}
         </section>
 
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-           ${createDestinationTemplate(currentDestination)}
+           ${currentDestination ? createDestinationTemplate(currentDestination) : ''}
 
         </section>
       </section>
@@ -199,21 +199,26 @@ export default class EditPointView extends AbstractStatefulView {
       offersByType,
       destinations,
     };
+    this._setState(EditPointView.parsePointToState({point}));
+
     this.#handleFormSubmit = onFormSubmit;
     this.#handleViewClick = onViewClick;
 
-    this.element.querySelector('form')
-      .addEventListener('submit', this.#formSubmitHadler);
-    this.element.querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#rollupClickHandler);
+    this._restoreHandlers();
   }
 
   get template() {
-    return createEditPointTemplate(this.#stat);
+    return createEditPointTemplate(this._state);
+  }
+
+  reset(point) {
+    this.updateElement(
+      EditPointView.parsePointToState(point),
+    );
   }
 
   //HANDLERS
-  /* _restoreHandlers = () => {
+  _restoreHandlers = () => {
     this.element.querySelector('form')
       .addEventListener('submit', this.#formSubmitHadler);
     this.element.querySelector('.event__rollup-btn')
@@ -223,14 +228,14 @@ export default class EditPointView extends AbstractStatefulView {
     this.element.querySelector('.event__input--destination')
       .addEventListener('change', this.#destinationChangeHandler);
     this.element.querySelector('.event__input--price')
-      .addEventListener('change', this.#priceChangeHandler);
+      .addEventListener('input', this.#priceInputHandler);
     this.element.querySelector('.event__available-offers')
       .addEventListener('change', this.#offerChangeHandler);
-  } */
+  };
 
   #formSubmitHadler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(this.#stat.point);
+    this.#handleFormSubmit(EditPointView.parseStateToPoint(this._state));
   };
 
   #rollupClickHandler = (evt) => {
@@ -238,8 +243,12 @@ export default class EditPointView extends AbstractStatefulView {
     this.#handleViewClick();
   };
 
+  static parseTaskToState(point) {
+    return {...point,
+    };
+  }
 
- /*  #typeChangeHandler = (evt) => {
+  #typeChangeHandler = (evt) => {
     this.updateElement({point: {...this._state.point, type: evt.target.value, offers: []}});
   };
 
@@ -253,6 +262,14 @@ export default class EditPointView extends AbstractStatefulView {
     const checkedBoxes = Array.from(this.element.querySelectorAll('.event__offer-checkbox:checked'));
 
     this._state({point: {...this._state.point, offers: checkedBoxes.map((element) => element.dataset.offersByType)}});
-  }; */
+  };
 
+  #priceInputHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({point: {...this._state.point, basePrice: evt.target.valueAsNumber}});
+  };
+
+  static parsePointToState = ({point}) => ({point});
+
+  static parseStateToPoint = (state) => state.point;
 }
