@@ -211,9 +211,9 @@ export default class EditPointView extends AbstractStatefulView {
     return createEditPointTemplate(this._state);
   }
 
-  reset(point) {
+  reset({point}) {
     this.updateElement(
-      EditPointView.parsePointToState(point),
+      EditPointView.parsePointToState({point}),
     );
   }
 
@@ -242,11 +242,6 @@ export default class EditPointView extends AbstractStatefulView {
     evt.preventDefault();
     this.#handleViewClick();
   };
-
-  static parseTaskToState(point) {
-    return {...point,
-    };
-  }
 
   #typeChangeHandler = (evt) => {
     this.updateElement({point: {...this._state.point, type: evt.target.value, offers: []}});
