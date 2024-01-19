@@ -1,6 +1,9 @@
 import { TYPES } from '../const.js';
 import dayjs from 'dayjs';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import flatpickr from 'flatpickr';
+
+import 'flatpickr/dist/flatpickr.min.css';
 
 //функция для верхнего регистра первой буквы в названии типа
 const upTitle = (title) => title[0].toUpperCase() + title.slice(1);
@@ -191,6 +194,8 @@ export default class EditPointView extends AbstractStatefulView {
   #stat = null;
   #handleFormSubmit = null;
   #handleViewClick = null;
+  #datePickerFrom = null;
+  #datePickerTo = null;
 
   constructor ({point, offersByType, destinations, onFormSubmit, onViewClick}) {
     super();
@@ -209,6 +214,22 @@ export default class EditPointView extends AbstractStatefulView {
 
   get template() {
     return createEditPointTemplate(this._state);
+  }
+
+  //перегружаем метод родителя removeElement
+  //чтобы при удалении удалялся более не нужный календарь
+  removeElement() {
+    super.removeElement();
+
+    if(this.#datePickerFrom) {
+      this.#datePickerFrom.destroy();
+      this.#datePickerFrom = null;
+    }
+
+    if(this.#datePickerTo) {
+      this.#datePickerTo.destroy();
+      this.#datePickerTo = null;
+    }
   }
 
   reset({point}) {
@@ -231,6 +252,8 @@ export default class EditPointView extends AbstractStatefulView {
       .addEventListener('input', this.#priceInputHandler);
     this.element.querySelector('.event__available-offers')
       .addEventListener('change', this.#offerChangeHandler);
+
+    this.#setDatepickers();
   };
 
   #formSubmitHadler = (evt) => {
@@ -263,6 +286,47 @@ export default class EditPointView extends AbstractStatefulView {
     evt.preventDefault();
     this._setState({point: {...this._state.point, basePrice: evt.target.valueAsNumber}});
   };
+
+  #dateFromCloseHandler = ([userDate]) => {
+    this._setState({point: {...this._state.point, dateFrom: userDate}});
+    this.#datePickerTo.set('minDate', this._state.point.dateFrom);
+  };
+
+  #dateToCloseHandler = ([userDate]) => {
+    this._setState({point: {...this._state.point, dateTo: userDate}});
+    this.#datePickerFrom.set('maxDate', this._state.point.dateTo);
+  };
+
+  //метод для создания календаря
+  #setDatepickers() {
+    const [dateFromElement, dateToElement] = this.element.querySelectorAll('.event__input--time');
+    const commonConfig = {
+      dateFormat: 'd/m/y H:i',
+      enableTime: true,
+      locale: {firstDayOfWeek: 1},
+      'time_24h': true,
+    };
+
+    this.#datePickerFrom = flatpickr(
+      dateFromElement,
+      {
+        ...commonConfig,
+        defaultDate: this._state.point.dateFrom,
+        onClose: this.#dateFromCloseHandler, //на событие flapicker передаём наш колбэк
+        maxDate: this._state.point.dateTo,
+      }
+    );
+
+    this.#datePickerTo = flatpickr(
+      dateToElement,
+      {
+        ...commonConfig,
+        defaultDate: this._state.point.dateTo,
+        onClose: this.#dateToCloseHandler, //на событие flapicker передаём наш колбэк
+        minDate: this._state.point.dateFrom,
+      }
+    );
+  }
 
   static parsePointToState = ({point}) => ({point});
 
