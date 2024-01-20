@@ -35,6 +35,10 @@ export default class TripPresenter {
     this.#pointsModel = pointsModel;
   }
 
+  get points() {
+    return this.#pointsModel.points;
+  }
+
   init() {
     this.#boardPoints = [...this.#pointsModel.points];
     this.#offersList = [...this.#pointsModel.offers];
