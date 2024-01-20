@@ -21,13 +21,13 @@ export default class TripPresenter {
   #noEventComponent = new NoEventView();
   #pointEdit = null;
 
-  #boardPoints = [];
+  //#boardPoints = [];
   #offersList = [];
   #destinationsList = [];
   #pointPresenter = new Map();
   #currentFilterType = FilterType.EVERYTHING;
   #currentSortType = SortType.DAY;
-  #sourcedBoardPoints = [];
+  //#sourcedBoardPoints = [];
 
   constructor({listContainer, filterContainer, pointsModel}) {
     this.#listContainer = listContainer;
@@ -36,17 +36,26 @@ export default class TripPresenter {
   }
 
   get points() {
+    switch (this.#currentSortType) {
+      case SortType.TIME:
+        return [...this.#pointsModel.points].sort(sortByTime);
+      case SortType.PRICE:
+        return [...this.#pointsModel.points].sort(sortByPrice);
+      default:
+        this.#currentSortType;
+    }
+
     return this.#pointsModel.points;
   }
 
   init() {
-    this.#boardPoints = [...this.#pointsModel.points];
+    //this.#boardPoints = [...this.#pointsModel.points];
     this.#offersList = [...this.#pointsModel.offers];
     this.#destinationsList = [...this.#pointsModel.destinations];
     // 1. В отличии от сортировки по любому параметру,
     // исходный порядок можно сохранить только одним способом -
     // сохранив исходный массив:
-    this.#sourcedBoardPoints = [...this.#pointsModel.points];
+    //this.#sourcedBoardPoints = [...this.#pointsModel.points];
 
     this.#renderBoard();
   }
@@ -56,8 +65,8 @@ export default class TripPresenter {
   };
 
   #handlePointChange = (updatedPoint) => {
-    this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
-    this.#sourcedBoardPoints = updateItem(this.#sourcedBoardPoints, updatedPoint);
+    //this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
+    //this.#sourcedBoardPoints = updateItem(this.#sourcedBoardPoints, updatedPoint);
     this.#pointPresenter.get(updatedPoint.id).init(updatedPoint, this.#offersList, this.#destinationsList);
   };
 
@@ -72,7 +81,7 @@ export default class TripPresenter {
     this.#pointPresenter.set(point.id, pointPresenter);
   }
 
-  #sortPoints(sortType) {
+ /*  #sortPoints(sortType) {
     // 2. Этот исходный массив задач необходим,
     // потому что для сортировки мы будем мутировать
     // массив в свойстве _boardTasks
@@ -90,7 +99,7 @@ export default class TripPresenter {
     }
 
     this.#currentSortType = sortType;
-  }
+  } */
 
   #handleSortTypeChange = (sortType) => {
     // - сортируем задачи
@@ -98,7 +107,7 @@ export default class TripPresenter {
       return;
     }
 
-    this.#sortPoints(sortType);
+    this.#currentSortType = sortType;
     // - очищаем список
     this.#clearPointList();
     // - рендерим список заново
@@ -116,9 +125,8 @@ export default class TripPresenter {
     remove(this.#sortComponent);
   }
 
-  #renderPoints() {
-    this.#boardPoints
-      .forEach((point) => this.#renderPoint(point, this.#offersList, this.#destinationsList));
+  #renderPoints(points) {
+    points.forEach((point) => this.#renderPoint(point, this.#offersList, this.#destinationsList));
   }
 
   #renderNoEvents() {
@@ -160,7 +168,7 @@ export default class TripPresenter {
     render(this.#buttonNewPoint, this.#listComponent.element, RenderPosition.AFTERBEGIN);
   }
  */
-/*   #renderEditPoint() {
+  /*   #renderEditPoint() {
     this.#pointEdit = new EditPointView({point: this.#boardPoints[0], offersByType: this.#offersList, destinations: this.#destinationsList});
     render(this.#pointEdit, this.#listComponent.element);
 
@@ -179,7 +187,7 @@ export default class TripPresenter {
     render(this.#listComponent, this.#listContainer);
 
     //условие отрисовки заглушки при остутствии точек маршрута
-    if (!this.#boardPoints.length) {
+    if (this.points.length) {
       this.#renderNoEvents();
 
       return;
@@ -187,7 +195,7 @@ export default class TripPresenter {
 
     this.#renderSort();
     this.#renderFilters();
-   //this.#renderEditPoint();
+    //this.#renderEditPoint();
     this.#renderPoints();
     //this.#renderButtonNewPoint();
   }
