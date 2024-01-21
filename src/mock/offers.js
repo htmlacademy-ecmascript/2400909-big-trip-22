@@ -1,6 +1,5 @@
 import { getRandomArrayElement } from '../utils/common.js';
 import { getRandomNumber } from '../utils/common.js';
-import { nanoid } from 'nanoid';
 
 export const mockOffers = [
   {
@@ -156,10 +155,7 @@ export const mockOffers = [
 ];
 
 export function getRandomOffer() {
-  return {
-    id: nanoid(),
-    ...getRandomArrayElement(mockOffers)
-  };
+  return getRandomArrayElement(mockOffers);
 }
 
 

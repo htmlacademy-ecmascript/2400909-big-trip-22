@@ -6,7 +6,6 @@ import { render, RenderPosition, remove } from '../framework/render.js';
 import NoEventView from '../view/list-empty-view.js';
 import PointPresenter from './point-presenter.js';
 //import EditPointView from '../view/edit-point-view.js';
-import { updateItem } from '../utils/common.js';
 import { FilterType, SortType } from '../const.js';
 import { sortByPrice, sortByTime } from '../utils/filter.js';
 
@@ -33,6 +32,8 @@ export default class TripPresenter {
     this.#listContainer = listContainer;
     this.#filterContainer = filterContainer;
     this.#pointsModel = pointsModel;
+
+    this.#pointsModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
@@ -41,8 +42,6 @@ export default class TripPresenter {
         return [...this.#pointsModel.points].sort(sortByTime);
       case SortType.PRICE:
         return [...this.#pointsModel.points].sort(sortByPrice);
-      default:
-        this.#currentSortType;
     }
 
     return this.#pointsModel.points;
@@ -64,42 +63,32 @@ export default class TripPresenter {
     this.#pointPresenter.forEach((presenter) => presenter.resetView());
   };
 
-  #handlePointChange = (updatedPoint) => {
-    //this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
-    //this.#sourcedBoardPoints = updateItem(this.#sourcedBoardPoints, updatedPoint);
-    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint, this.#offersList, this.#destinationsList);
+  #handleViewAction = (actionType, updateType, update) => {
+    console.log(actionType, updateType, update);
+    // Здесь будем вызывать обновление модели.
+    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
+    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
+    // update - обновленные данные
+  };
+
+  #handleModelEvent = (updateType, data) => {
+    console.log(updateType, data);
+    // В зависимости от типа изменений решаем, что делать:
+    // - обновить часть списка (например, когда поменялось описание)
+    // - обновить список (например, когда задача ушла в архив)
+    // - обновить всю доску (например, при переключении фильтра)
   };
 
   #renderPoint (point, offers, destinations) {
     const pointPresenter = new PointPresenter({
       listContainer: this.#listComponent.element,
-      onDataChange: this.#handlePointChange,
+      onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange,
     });
 
     pointPresenter.init(point, offers, destinations);
     this.#pointPresenter.set(point.id, pointPresenter);
   }
-
- /*  #sortPoints(sortType) {
-    // 2. Этот исходный массив задач необходим,
-    // потому что для сортировки мы будем мутировать
-    // массив в свойстве _boardTasks
-    switch (sortType) {
-      case SortType.TIME:
-        this.#boardPoints.sort(sortByTime);
-        break;
-      case SortType.PRICE:
-        this.#boardPoints.sort(sortByPrice);
-        break;
-      default:
-      // 3. А когда пользователь захочет "вернуть всё, как было",
-      // мы просто запишем в _boardTasks исходный массив
-        this.#boardPoints = [...this.#sourcedBoardPoints];
-    }
-
-    this.#currentSortType = sortType;
-  } */
 
   #handleSortTypeChange = (sortType) => {
     // - сортируем задачи
@@ -123,6 +112,16 @@ export default class TripPresenter {
 
   #removeSort() {
     remove(this.#sortComponent);
+  }
+
+  #renderPoint(point) {
+    const pointPresenter = new PointPresenter({
+      listContainer: this.#listComponent.element,
+      onDataChange: this.#handleViewAction,
+      onModeChange: this.#handleModeChange,
+    });
+    pointPresenter.init(point);
+    this.#pointPresenter.set(point.id, pointPresenter);
   }
 
   #renderPoints(points) {
