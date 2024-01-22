@@ -157,6 +157,15 @@ export default class TripPresenter {
     this.#currentFilterType = filterType;
   }
 
+  #renderFilters() {
+    this.#filterComponent = new FilterView({onFilterChange: this.#handleFilterTypeChange});
+    render(this.#filterComponent, this.#filterContainer, RenderPosition.AFTERBEGIN);
+  }
+
+  #removeFilter() {
+    remove(this.#filterComponent);
+  }
+
   #handleFilterTypeChange = (filterType) => {
     // - сортируем задачи
     if (this.#currentFilterType === filterType) {
@@ -168,13 +177,9 @@ export default class TripPresenter {
     this.#clearBoard();
     // - рендерим список заново
     this.#renderBoard();
+    this.#removeFilter();
+    this.#renderFilters();
   };
-
-  #renderFilters() {
-    this.#filterComponent = new FilterView({onFilterChange: this.#handleFilterTypeChange});
-    render(this.#filterComponent, this.#filterContainer, RenderPosition.AFTERBEGIN);
-  }
-
   /* #renderButtonNewPoint() {
     render(this.#buttonNewPoint, this.#listComponent.element, RenderPosition.AFTERBEGIN);
   }
