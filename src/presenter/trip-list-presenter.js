@@ -83,7 +83,6 @@ export default class TripPresenter {
   };
 
   #handleModelEvent = (updateType, data) => {
-    console.log(updateType, data);
     // В зависимости от типа изменений решаем, что делать:
     switch (updateType) {
       case UpdateType.PATCH:
@@ -92,9 +91,13 @@ export default class TripPresenter {
         break;
       case UpdateType.MINOR:
         // - обновить список (например, когда задача ушла в архив)
+        this.#clearBoard();
+        this.#renderBoard();
         break;
       case UpdateType.MAJOR:
         // - обновить всю доску (например, при переключении фильтра)
+        this.#clearBoard({resetSortType: true});
+        this.#renderBoard();
         break;
     }
   };
@@ -118,9 +121,8 @@ export default class TripPresenter {
 
     this.#currentSortType = sortType;
     // - очищаем список
-    this.#clearPointList();
-    // - рендерим список заново
-    this.#renderPoints();
+    this.#clearBoard();
+    this.#renderBoard();
     this.#removeSort();
     this.#renderSort();
   };
@@ -163,7 +165,7 @@ export default class TripPresenter {
 
     this.#filterPoints(filterType);
     // - очищаем список
-    this.#clearPointList();
+    this.#clearBoard();
     // - рендерим список заново
     this.#renderBoard();
   };
@@ -187,25 +189,36 @@ export default class TripPresenter {
     }
   } */
 
-  #clearPointList() {
+  /*  #clearPointList() {
     this.#pointPresenter.forEach((presenter) => presenter.destroy());
     this.#pointPresenter.clear();
+  } */
+
+  #clearBoard({resetSortType = false} = {}) {
+    this.#pointPresenter.forEach((presenter) => presenter.destroy());
+    this.#pointPresenter.clear();
+
+    remove(this.#sortComponent);
+    remove(this.#noEventComponent);
+
+    if (resetSortType) {
+      this.#currentSortType = SortType.DAY;
+    }
   }
 
   #renderBoard() {
     render(this.#listComponent, this.#listContainer);
 
     //условие отрисовки заглушки при остутствии точек маршрута
-    if (this.points.length) {
+    if (this.points.length === 0) {
       this.#renderNoEvents();
-
       return;
     }
 
     this.#renderSort();
     this.#renderFilters();
+    this.#renderPoints(); // TODO: замена на render(this.#taskListComponent, this.#boardComponent.element);
     //this.#renderEditPoint();
-    this.#renderPoints();
     //this.#renderButtonNewPoint();
   }
 }

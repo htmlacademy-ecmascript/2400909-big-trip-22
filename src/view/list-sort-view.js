@@ -58,13 +58,13 @@ function createSortTemplate(currentSortType) {
 }
 
 export default class SortView extends AbstractView {
-  #handleSortTypeChange = null;
   #currentSortType = null;
+  #handleSortTypeChange = null;
 
   constructor ({onSortTypeChange, currentSortType}) {
     super();
-    this.#handleSortTypeChange = onSortTypeChange;
     this.#currentSortType = currentSortType;
+    this.#handleSortTypeChange = onSortTypeChange;
 
     this.element.addEventListener('click', this.#sortTypeChangeHandler);
   }
