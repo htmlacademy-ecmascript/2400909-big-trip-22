@@ -18,14 +18,14 @@ export default class TripPresenter {
   #filterComponent = null;
   #sortComponent = null;
   #buttonNewPoint = new ButtonNewEvent();
-  #noEventComponent = new NoEventView();
+  #noEventComponent = null;
   #pointEdit = null;
 
   //#boardPoints = [];
   #offersList = [];
   #destinationsList = [];
   #pointPresenter = new Map();
-  #currentFilterType = FilterType.EVERYTHING;
+  #filterType = FilterType.EVERYTHING;
   #currentSortType = SortType.DAY;
   //#sourcedBoardPoints = [];
 
@@ -40,9 +40,9 @@ export default class TripPresenter {
   }
 
   get points() {
-    const filterType = this.#filterModel.filter;
+    this.#filterType = this.#filterModel.filter;
     const points = this.#pointsModel.points;
-    const filteredPoints = filter[filterType](points);
+    const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType) {
       case SortType.TIME:
@@ -147,6 +147,10 @@ export default class TripPresenter {
   }
 
   #renderNoEvents() {
+    this.#noEventComponent = new NoEventView({
+      filterType: this.#filterType
+    });
+
     render(this.#noEventComponent, this.#listComponent.element, RenderPosition.AFTERBEGIN);
   }
 
@@ -160,7 +164,7 @@ export default class TripPresenter {
     // мы просто запишем в _boardTasks исходный массив
     //this.#boardPoints = [...this.#sourcedBoardPoints];
 
-    this.#currentFilterType = filterType;
+    this.#filterType = filterType;
   }
 
   #renderFilters() {
@@ -174,7 +178,7 @@ export default class TripPresenter {
 
   #handleFilterTypeChange = (filterType) => {
     // - сортируем задачи
-    if (this.#currentFilterType === filterType) {
+    if (this.#filterType === filterType) {
       return;
     }
 
@@ -211,6 +215,10 @@ export default class TripPresenter {
 
     remove(this.#sortComponent);
     remove(this.#noEventComponent);
+
+    if(this.#noEventComponent) {
+      remove(this.#noEventComponent);
+    }
 
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
