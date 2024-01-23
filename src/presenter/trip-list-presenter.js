@@ -6,13 +6,13 @@ import { render, RenderPosition, remove } from '../framework/render.js';
 import NoEventView from '../view/list-empty-view.js';
 import PointPresenter from './point-presenter.js';
 //import EditPointView from '../view/edit-point-view.js';
-import { FilterType, SortType } from '../const.js';
+import { FilterType, SortType, UserAction, UpdateType } from '../const.js';
 import { sortByPrice, sortByTime } from '../utils/filter.js';
-import { UserAction, UpdateType } from '../const.js';
 
 export default class TripPresenter {
   #listContainer = null;
   #pointsModel = null;
+  #filterModel = null;
   #filterContainer = null;
   #listComponent = new ListView();
   #filterComponent = null;
@@ -29,23 +29,29 @@ export default class TripPresenter {
   #currentSortType = SortType.DAY;
   //#sourcedBoardPoints = [];
 
-  constructor({listContainer, filterContainer, pointsModel}) {
+  constructor({listContainer, filterContainer, pointsModel, filterModel}) {
     this.#listContainer = listContainer;
     this.#filterContainer = filterContainer;
     this.#pointsModel = pointsModel;
+    this.#filterModel = filterModel;
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
+    const filterType = this.#filterModel.filter;
+    const points = this.#pointsModel.points;
+    const filteredPoints = filter[filterType](points);
+
     switch (this.#currentSortType) {
       case SortType.TIME:
-        return [...this.#pointsModel.points].sort(sortByTime);
+        return filteredPoints.sort(sortByTime);
       case SortType.PRICE:
-        return [...this.#pointsModel.points].sort(sortByPrice);
+        return filteredPoints.sort(sortByPrice);
     }
 
-    return this.#pointsModel.points;
+    return filteredPoints;
   }
 
   init() {
