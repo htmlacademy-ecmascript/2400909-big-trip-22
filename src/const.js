@@ -12,7 +12,7 @@ const SortType = {
   EVENT: 'event',
   TIME: 'time',
   PRICE: 'price',
-  OFFER: 'offer'
+  OFFERS: 'offers'
 };
 
 export { FilterType, SortType };

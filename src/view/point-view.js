@@ -57,10 +57,10 @@ export default class PointView extends AbstractView {
   #handleFavoriteClick = null;
 
 
-  constructor({point, offers, onEditClick, onFavoriteClick}) {
+  constructor({point, offersByType, onEditClick, onFavoriteClick}) {
     super();
     this.#point = point;
-    this.#typeOffers = offers;
+    this.#typeOffers = offersByType;
     this.#handleEditClick = onEditClick;
     this.#handleFavoriteClick = onFavoriteClick;
 
