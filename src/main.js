@@ -8,6 +8,7 @@ import FilterPresenter from './presenter/filter-presenter.js';
 //import FilterView from './view/list-filter-view.js';
 //import SortView from './view/list-sort-view.js';
 
+//const siteHeader = document.querySelector('.page-header');
 const listContainer = document.querySelector('.trip-events');
 const filterContainer = document.querySelector('.trip-controls__filters');
 

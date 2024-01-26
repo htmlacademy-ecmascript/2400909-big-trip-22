@@ -1,39 +1,47 @@
-import FilterView from '../view/list-filter-view.js';
 import SortView from '../view/list-sort-view.js';
 import ListView from '../view/list-view.js';
-import ButtonNewEvent from '../view/button-new-event.js';
+import NewEventButtonView from '../view/button-new-event.js';
 import { render, RenderPosition, remove } from '../framework/render.js';
 import NoEventView from '../view/list-empty-view.js';
 import PointPresenter from './point-presenter.js';
-//import EditPointView from '../view/edit-point-view.js';
+import NewEventPresenter from './new-event-presenter.js';
 import { FilterType, SortType, UserAction, UpdateType } from '../const.js';
 import { filter, sortByPrice, sortByTime } from '../utils/filter.js';
+//import EditPointView from '../view/edit-point-view.js';
+//import FilterView from '../view/list-filter-view.js';
 
 export default class TripPresenter {
   #listContainer = null;
   #pointsModel = null;
   #filterModel = null;
-  #filterContainer = null;
+  //#filterContainer = null;
   #listComponent = new ListView();
-  #filterComponent = null;
+  //#filterComponent = null;
   #sortComponent = null;
-  #buttonNewPoint = new ButtonNewEvent();
+  //#buttonNewPoint = new NewEventButtonView();
   #noEventComponent = null;
-  #pointEdit = null;
+  //#pointEdit = null;
 
   //#boardPoints = [];
   #offersList = [];
   #destinationsList = [];
   #pointPresenter = new Map();
+  #newEventPresenter = null;
   #filterType = FilterType.EVERYTHING;
   #currentSortType = SortType.DAY;
   //#sourcedBoardPoints = [];
 
-  constructor({listContainer, filterContainer, pointsModel, filterModel}) {
+  constructor({listContainer, pointsModel, filterModel, onNewEventDestroy}) {
     this.#listContainer = listContainer;
-    this.#filterContainer = filterContainer;
+    //this.#filterContainer = filterContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
+
+    this.#newEventPresenter = new NewEventPresenter({
+      pointListContainer: this.#listComponent.element,
+      onDataChange: this.#handleViewAction,
+      onDestroy: onNewEventDestroy
+    });
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
@@ -66,7 +74,14 @@ export default class TripPresenter {
     this.#renderBoard();
   }
 
+  createPoint() {
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.DAY);
+    this.#newEventPresenter.init();
+  }
+
   #handleModeChange = () => {
+    this.#newEventPresenter.destroy();
     this.#pointPresenter.forEach((presenter) => presenter.resetView());
   };
 
@@ -155,7 +170,7 @@ export default class TripPresenter {
   }
 
   //объект для фильтров
-  #filterPoints(filterType) {
+  /* #filterPoints(filterType) {
     // 2. Этот исходный массив задач необходим,
     // потому что для сортировки мы будем мутировать
     // массив в свойстве _boardTasks
@@ -165,7 +180,7 @@ export default class TripPresenter {
     //this.#boardPoints = [...this.#sourcedBoardPoints];
 
     this.#filterType = filterType;
-  }
+  } */
 
   /* renderFilters() {
     this.#filterComponent = new FilterView({onFilterChange: this.#handleFilterTypeChange});
@@ -176,7 +191,7 @@ export default class TripPresenter {
     remove(this.#filterComponent);
   } */
 
-  #handleFilterTypeChange = (filterType) => {
+  /* #handleFilterTypeChange = (filterType) => {
     // - сортируем задачи
     if (this.#filterType === filterType) {
       return;
@@ -189,7 +204,7 @@ export default class TripPresenter {
     this.#renderBoard();
     //this.#removeFilter();
     //this.#renderFilters();
-  };
+  }; */
   /* #renderButtonNewPoint() {
     render(this.#buttonNewPoint, this.#listComponent.element, RenderPosition.AFTERBEGIN);
   }
