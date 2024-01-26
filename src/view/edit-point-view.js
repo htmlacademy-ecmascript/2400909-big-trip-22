@@ -1,4 +1,3 @@
-import he from 'he';
 import { TYPES } from '../const.js';
 import dayjs from 'dayjs';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
@@ -82,7 +81,7 @@ function createPriceTemplate(point) {
         <span class="visually-hidden">Price</span>
         &euro;
       </label>
-      <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${he.encode(basePrice)}">
+      <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${basePrice}">
     `
   );
 }
