@@ -1,5 +1,6 @@
 import { getRandomArrayElement } from '../utils/common.js';
 import { getRandomNumber } from '../utils/common.js';
+import { nanoid } from 'nanoid';
 
 export const mockOffers = [
   {
@@ -155,16 +156,10 @@ export const mockOffers = [
 ];
 
 export function getRandomOffer() {
-  return getRandomArrayElement(mockOffers);
+  return {
+    id: nanoid(),
+    ...getRandomArrayElement(mockOffers)
+  };
 }
 
-/* const pointTypeOffer = offers
-    .find((offer) => offer.type === point.type);
 
-  pointTypeOffer.offers
-    .map((offer) => {
-      const checked = point.offers.includes(offer.id) ? 'checked' : '';
-
-      return `<input type="checkbox" ${checked} />`;
-    })
-*/

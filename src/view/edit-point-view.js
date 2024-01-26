@@ -200,6 +200,6 @@ export default class EditPointView extends AbstractView {
 
   #formSubmitHadler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(this.#stat); //возможно, нужно присвоеть this для point, offersByType, destination
   };
 }
