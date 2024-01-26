@@ -7,7 +7,7 @@ import NoEventView from '../view/list-empty-view.js';
 import PointPresenter from './point-presenter.js';
 //import EditPointView from '../view/edit-point-view.js';
 import { FilterType, SortType, UserAction, UpdateType } from '../const.js';
-import { sortByPrice, sortByTime } from '../utils/filter.js';
+import { filter, sortByPrice, sortByTime } from '../utils/filter.js';
 
 export default class TripPresenter {
   #listContainer = null;
@@ -142,8 +142,8 @@ export default class TripPresenter {
     remove(this.#sortComponent);
   }
 
-  #renderPoints(points) {
-    points.forEach((point) => this.#renderPoint(point, this.#offersList, this.#destinationsList));
+  #renderPoints() {
+    this.points.forEach((point) => this.#renderPoint(point, this.#offersList, this.#destinationsList));
   }
 
   #renderNoEvents() {
@@ -167,14 +167,14 @@ export default class TripPresenter {
     this.#filterType = filterType;
   }
 
-  #renderFilters() {
+  /* renderFilters() {
     this.#filterComponent = new FilterView({onFilterChange: this.#handleFilterTypeChange});
     render(this.#filterComponent, this.#filterContainer, RenderPosition.AFTERBEGIN);
-  }
+  } */
 
-  #removeFilter() {
+  /* #removeFilter() {
     remove(this.#filterComponent);
-  }
+  } */
 
   #handleFilterTypeChange = (filterType) => {
     // - сортируем задачи
@@ -187,8 +187,8 @@ export default class TripPresenter {
     this.#clearBoard();
     // - рендерим список заново
     this.#renderBoard();
-    this.#removeFilter();
-    this.#renderFilters();
+    //this.#removeFilter();
+    //this.#renderFilters();
   };
   /* #renderButtonNewPoint() {
     render(this.#buttonNewPoint, this.#listComponent.element, RenderPosition.AFTERBEGIN);
@@ -235,7 +235,7 @@ export default class TripPresenter {
     }
 
     this.#renderSort();
-    this.#renderFilters();
+    //this.#renderFilters();
     this.#renderPoints(); // TODO: замена на render(this.#taskListComponent, this.#boardComponent.element);
     //this.#renderEditPoint();
     //this.#renderButtonNewPoint();

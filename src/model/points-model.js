@@ -2,7 +2,7 @@ import { getRandomPoint } from '../mock/points.js';
 import { mockOffers } from '../mock/offers.js';
 import { mockDestinations } from '../mock/destinations.js';
 import Observable from '../framework/observable.js';
-import { UpdateType, UserAction } from '../const.js';
+//import { UpdateType, UserAction } from '../const.js';
 
 const POINT_COUNT = 5;
 

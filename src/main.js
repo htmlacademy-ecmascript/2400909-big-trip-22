@@ -13,7 +13,7 @@ const filterContainer = document.querySelector('.trip-controls__filters');
 
 const pointsModel = new PointsModel();
 const filterModel = new FilterModel();
-const tripListPresenter = new TripPresenter({listContainer, filterContainer, pointsModel});
+const tripListPresenter = new TripPresenter({listContainer, filterContainer, pointsModel, filterModel});
 
 const filterPresenter = new FilterPresenter({
   filterContainer: listContainer,
