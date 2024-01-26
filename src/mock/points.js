@@ -1,5 +1,4 @@
 import { getRandomArrayElement } from '../utils/common.js';
-import { getRandomDestination } from './destinations.js';
 import { nanoid } from 'nanoid';
 
 export const mockPoints = [
@@ -8,7 +7,7 @@ export const mockPoints = [
     basePrice: 1100,
     dateFrom: new Date('2019-07-10T22:55:56.845Z'),
     dateTo: new Date('2019-07-11T11:22:13.375Z'),
-    destination: getRandomDestination(),
+    destination: 3,
     isFavorite: false,
     offers: [1, 2, 3],
     type: 'taxi'
@@ -18,7 +17,7 @@ export const mockPoints = [
     basePrice: 1700,
     dateFrom: new Date('2019-08-11T22:55:56.845Z'),
     dateTo: new Date('2019-08-19T11:22:13.375Z'),
-    destination: getRandomDestination(),
+    destination: 1,
     isFavorite: false,
     offers: [4, 5, 6],
     type: 'bus'
@@ -28,7 +27,7 @@ export const mockPoints = [
     basePrice: 700,
     dateFrom: new Date('2019-09-09T22:55:56.845Z'),
     dateTo: new Date('2019-09-15T11:22:13.375Z'),
-    destination: getRandomDestination(),
+    destination: 2,
     isFavorite: false,
     offers: [7, 8, 9],
     type: 'train'
@@ -38,7 +37,7 @@ export const mockPoints = [
     basePrice: 2100,
     dateFrom: new Date('2019-09-09T22:55:56.845Z'),
     dateTo: new Date('2019-09-15T11:22:13.375Z'),
-    destination: getRandomDestination(),
+    destination: 5,
     isFavorite: false,
     offers: [10, 11],
     type: 'ship'
@@ -48,7 +47,7 @@ export const mockPoints = [
     basePrice: 900,
     dateFrom: new Date('2019-09-09T22:55:56.845Z'),
     dateTo: new Date('2019-09-15T11:22:13.375Z'),
-    destination: getRandomDestination(),
+    destination: 3,
     isFavorite: false,
     offers: [],
     type: 'drive'
@@ -57,8 +56,8 @@ export const mockPoints = [
 
 export function getRandomPoint() {
   return {
+    ...getRandomArrayElement(mockPoints),
     id: nanoid(),
-    ...getRandomArrayElement(mockPoints)
   };
 }
 

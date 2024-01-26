@@ -2,7 +2,7 @@ import FilterView from '../view/list-filter-view.js';
 import SortView from '../view/list-sort-view.js';
 import ListView from '../view/list-view.js';
 import ButtonNewEvent from '../view/button-new-event.js';
-import { render, RenderPosition } from '../framework/render.js';
+import { render, RenderPosition, remove } from '../framework/render.js';
 import NoEventView from '../view/list-empty-view.js';
 import PointPresenter from './point-presenter.js';
 //import EditPointView from '../view/edit-point-view.js';
@@ -98,12 +98,18 @@ export default class TripPresenter {
     // - очищаем список
     this.#clearPointList();
     // - рендерим список заново
-    this.#renderBoard();
+    this.#renderPoints();
+    this.#removeSort();
+    this.#renderSort();
   };
 
   #renderSort() {
-    this.#sortComponent = new SortView({onSortTypeChange: this.#handleSortTypeChange});
+    this.#sortComponent = new SortView({onSortTypeChange: this.#handleSortTypeChange, currentSortType: this.#currentSortType});
     render(this.#sortComponent, this.#listComponent.element, RenderPosition.AFTERBEGIN);
+  }
+
+  #removeSort() {
+    remove(this.#sortComponent);
   }
 
   #renderPoints() {
@@ -169,7 +175,7 @@ export default class TripPresenter {
     render(this.#listComponent, this.#listContainer);
 
     //условие отрисовки заглушки при остутствии точек маршрута
-    if (this.#boardPoints.every((point) => point.isArchive)) {
+    if (!this.#boardPoints.length) {
       this.#renderNoEvents();
 
       return;
