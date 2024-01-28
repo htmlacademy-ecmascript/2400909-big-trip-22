@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view';
+/* import AbstractView from '../framework/view/abstract-view';
 
 function createNewEventButtonTemplate() {
   return (
@@ -10,19 +10,23 @@ function createNewEventButtonTemplate() {
       </button>
     `
   );
-}
+} */
 
-export default class NewEventButtonView extends AbstractView {
+export default class NewEventButtonView {
   #handleClick = null;
+  #element = null;
 
   constructor({onClick}) {
-    super();
     this.#handleClick = onClick;
     this.element.addEventListener('click', this.#clickHandler);
   }
 
-  get template() {
-    return createNewEventButtonTemplate();
+  get element() {
+    if (!this.#element) {
+      this.#element = document.querySelector('.trip-main__event-add-btn');
+    }
+
+    return this.#element;
   }
 
   #clickHandler = (evt) => {

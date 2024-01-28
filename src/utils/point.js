@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { TYPES } from '../const';
 
 const DATE_FORMAT = 'D MMM';
 
@@ -25,6 +26,17 @@ export function calculateDuration(startDate, endDate) {
 
   return `${daysDiff}D ${hoursDiff}h ${minutesDiff}m`;
 }
+
+export const getEmptyPoint = () => ({
+  id: 0,
+  basePrice: 0,
+  dateFrom: new Date(),
+  dateTo: new Date(),
+  destination: 0,
+  isFavorite: false,
+  offers: [],
+  type: TYPES[0],
+});
 
 
 // Функция помещает задачи без даты в конце списка,

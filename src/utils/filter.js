@@ -1,6 +1,11 @@
 import dayjs from 'dayjs';
-import { FilterType, SortType } from '../const';
-import { calculateDuration } from './point';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import { FilterType } from '../const';
+//import { calculateDuration } from './point';
+
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
 
 export function sortByPrice (eventA, eventB) {
   return eventA.basePrice - eventB.basePrice;
@@ -24,9 +29,9 @@ export const filter = {
   [FilterType.PAST]: (points) => points.filter((point) => dayjs().isAfter(dayjs(point.dateTo)))
 };
 
-const sort = {
+/* const sort = {
   [SortType.DAY]: (points) => points.sort((first, second) => dayjs(first.dateFrom).diff(dayjs(second.dateFrom))),
   [SortType.PRICE]: (points) => points.sort((first, second) => second.price - first.price),
   [SortType.TIME]: (points) => points.sort((first, second) => calculateDuration(second.dateFrom, second.dateTo, true) - calculateDuration(first.dateFrom, first.dateTo, true))
-};
+}; */
 

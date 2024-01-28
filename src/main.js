@@ -31,7 +31,7 @@ function handleNewEventFormClose() {
 }
 
 function handleNewTaskButtonClick() {
-  tripListPresenter.createTask();
+  tripListPresenter.createPoint();
   newEventButtonComponent.element.disabled = true;
 }
 

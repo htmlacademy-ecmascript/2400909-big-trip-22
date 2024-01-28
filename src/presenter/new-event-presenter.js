@@ -2,9 +2,14 @@ import { remove, render, RenderPosition } from '../framework/render';
 import EditPointView from '../view/edit-point-view';
 import { nanoid } from 'nanoid';
 import { UserAction, UpdateType } from '../const';
+import { getEmptyPoint } from '../utils/point';
 
 export default class NewEventPresenter {
   #pointListContainer = null;
+  #point = null;
+  #offers = [];
+  #destinations = [];
+
   #handleDataChange = null;
   #handleDestroy = null;
 
@@ -16,14 +21,21 @@ export default class NewEventPresenter {
     this.#handleDestroy = onDestroy;
   }
 
-  init() {
+  init(offers, destinations) {
     if (this.#pointEditComponent !== null) {
       return;
     }
 
+    this.#destinations = destinations;
+    this.#offers = offers;
+    this.#point = getEmptyPoint();
+
     this.#pointEditComponent = new EditPointView({
+      point: this.#point,
+      offersByType: this.#offers,
+      destinations: this.#destinations,
       onFormSubmit: this.#handleFormSubmit,
-      onDeleteClick: this.#handleDeleteClick
+      onDeleteClick: this.#handleDeleteClick,
     });
 
     render(this.#pointEditComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);

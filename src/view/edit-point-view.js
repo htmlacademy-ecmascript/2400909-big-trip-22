@@ -21,7 +21,11 @@ function createListDestinationsTemplate(destinations, id) {
 
 function createTypeTemplate(point, currentDestination, destinations) {
   const {id, type} = point;
-  const {name} = currentDestination;
+  const {name} = currentDestination || {name: ''};
+
+  /* if (!currentDestination) {
+    return '';
+  } */
 
   return (
     `<div class="event__type-wrapper">
@@ -92,13 +96,17 @@ function createSaveButton() {
   );
 }
 
-function createResetButton() {
+function createResetButton(pointId) {
   return (
-    '<button class="event__reset-btn" type="reset">Delete</button>'
+    `<button class="event__reset-btn" type="reset">${pointId === 0 ? 'Cancel' : 'Delete'}</button>`
   );
 }
 
-function createRollupButton() {
+function createRollupButton(pointId) {
+  if (pointId === 0) {
+    return '';
+  }
+
   return (
     `<button class="event__rollup-btn" type="button">
       <span class="visually-hidden">Open event</span>
@@ -107,7 +115,6 @@ function createRollupButton() {
 }
 
 function createOfferTemplate(point, offersByType) {
-  //const {offers} = point;
   const pointTypeOffer = offersByType.find((offer) => offer.type === point.type);
 
   if (pointTypeOffer.length !== 0) {
@@ -117,14 +124,15 @@ function createOfferTemplate(point, offersByType) {
           const checked = point.offers.includes(offer.id) ? 'checked' : '';
 
           return (
-            `<div class="event__offer-selector">
-            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title}-${offer.id}" type="checkbox" name="event-offer-${offer.title}" ${checked}>
-            <label class="event__offer-label" for="event-offer-${offer.title}-${offer.id}">
-              <span class="event__offer-title">${upTitle(offer.title)}</span>
-              &plus;&euro;&nbsp;
-              <span class="event__offer-price">${offer.price}</span>
-            </label>
-          </div>`
+            `
+            <div class="event__offer-selector">
+              <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title}-${offer.id}" type="checkbox" name="event-offer-${offer.title}" ${checked}>
+              <label class="event__offer-label" for="event-offer-${offer.title}-${offer.id}">
+                <span class="event__offer-title">${upTitle(offer.title)}</span>
+                &plus;&euro;&nbsp;
+                <span class="event__offer-price">${offer.price}</span>
+              </label>
+            </div>`
           );
         }).join('')
         }
@@ -136,20 +144,23 @@ function createOfferTemplate(point, offersByType) {
 }
 
 function createDestinationTemplate(currentDestination) {
-  const {description, pictures} = currentDestination;
+  const {description, pictures} = currentDestination || {};
 
-  if (pictures.length === 0) {
+  if (!currentDestination || pictures.length === 0) {
     return '';
   }
 
   return (
-    `<p class="event__destination-description">${description}</p>
+    `<section class="event__section  event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+        <p class="event__destination-description">${description}</p>
 
-    <div class="event__photos-container">
-      <div class="event__photos-tape">
-      ${pictures.map((image) => `<img class="event__photo" src="${image.src}" alt="${image.description}">`).join('')}
-      </div>
-    </div>`
+        <div class="event__photos-container">
+          <div class="event__photos-tape">
+          ${pictures.map((image) => `<img class="event__photo" src="${image.src}" alt="${image.description}">`).join('')}
+          </div>
+        </div>
+    </section>`
   );
 }
 
@@ -170,8 +181,8 @@ function createEditPointTemplate(point, offersByType, destinations) {
         </div>
 
         ${createSaveButton()}
-        ${createResetButton()}
-        ${createRollupButton()}
+        ${createResetButton(point.id)}
+        ${createRollupButton(point.id)}
       </header>
       <section class="event__details">
         <section class="event__section  event__section--offers">
@@ -179,11 +190,8 @@ function createEditPointTemplate(point, offersByType, destinations) {
             ${createOfferTemplate(point, offersByType)}
         </section>
 
-        <section class="event__section  event__section--destination">
-          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
            ${currentDestination ? createDestinationTemplate(currentDestination) : ''}
 
-        </section>
       </section>
     </form>
     </li>`
@@ -244,7 +252,7 @@ export default class EditPointView extends AbstractStatefulView {
     this.element.querySelector('form')
       .addEventListener('submit', this.#formSubmitHadler);
     this.element.querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#rollupClickHandler);
+      ?.addEventListener('click', this.#rollupClickHandler);
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#typeChangeHandler);
     this.element.querySelector('.event__input--destination')
@@ -279,7 +287,7 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   #destinationChangeHandler = (evt) => {
-    const selectedDestination = this.destinations.find((dest) => dest.name === evt.target.value);
+    const selectedDestination = this.#destinations.find((dest) => dest.name === evt.target.value);
     const selectedDestinationById = (selectedDestination) ? selectedDestination.id : null;
     this.updateElement({point: {...this._state.point, destination: selectedDestinationById}});
   };
@@ -287,7 +295,7 @@ export default class EditPointView extends AbstractStatefulView {
   #offerChangeHandler = () => {
     const checkedBoxes = Array.from(this.element.querySelectorAll('.event__offer-checkbox:checked'));
 
-    this._state({point: {...this._state.point, offers: checkedBoxes.map((element) => element.dataset.offersByType)}});
+    this._setState({point: {...this._state.point, offers: checkedBoxes.map((element) => element.dataset.offersByType)}});
   };
 
   #priceInputHandler = (evt) => {

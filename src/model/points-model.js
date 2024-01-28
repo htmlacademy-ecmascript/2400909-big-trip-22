@@ -33,7 +33,7 @@ export default class PointsModel extends Observable {
     this.#points = [
       ...this.#points.slice(0, index),
       update,
-      ...this.#points.clice(index + 1),
+      ...this.#points.slice(index + 1),
     ];
 
     this._notify(updateType, update);
@@ -58,7 +58,7 @@ export default class PointsModel extends Observable {
     this.#points = [
       ...this.#points.slice(0, index),
       update,
-      ...this.#points.clice(index + 1),
+      ...this.#points.slice(index + 1),
     ];
 
     this._notify(updateType, update);

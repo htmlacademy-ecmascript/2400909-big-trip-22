@@ -76,8 +76,8 @@ export default class TripPresenter {
 
   createPoint() {
     this.#currentSortType = SortType.DAY;
-    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.DAY);
-    this.#newEventPresenter.init();
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this.#newEventPresenter.init(this.#offersList, this.#destinationsList);
   }
 
   #handleModeChange = () => {
