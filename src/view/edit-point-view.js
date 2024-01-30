@@ -201,13 +201,13 @@ function createEditPointTemplate(point, offersByType, destinations) {
 export default class EditPointView extends AbstractStatefulView {
   #handleFormSubmit = null;
   #handleViewClick = null;
-  #handleCancelClick = null;
+  #handleDeleteClick = null;
   #datePickerFrom = null;
   #datePickerTo = null;
   #offersByType = null;
   #destinations = null;
 
-  constructor ({point, offersByType, destinations, onFormSubmit, onViewClick, onDeleteClick: onCancelClick}) {
+  constructor ({point, offersByType, destinations, onFormSubmit, onViewClick, onDeleteClick}) {
     super();
     this.#offersByType = offersByType;
     this.#destinations = destinations;
@@ -216,7 +216,7 @@ export default class EditPointView extends AbstractStatefulView {
 
     this.#handleFormSubmit = onFormSubmit;
     this.#handleViewClick = onViewClick;
-    this.#handleCancelClick = onCancelClick;
+    this.#handleDeleteClick = onDeleteClick;
 
     this._restoreHandlers();
   }
@@ -261,8 +261,8 @@ export default class EditPointView extends AbstractStatefulView {
       .addEventListener('input', this.#priceInputHandler);
     this.element.querySelector('.event__available-offers')
       ?.addEventListener('change', this.#offerChangeHandler);
-    this.element.querySelector('.event__reset-btn')
-      .addEventListener('click', this.#formCancelHandler);
+    this.element.querySelector('form')
+      .addEventListener('reset', this.#formDeleteHandler);
 
     this.#setDatepickers();
   };
@@ -272,15 +272,12 @@ export default class EditPointView extends AbstractStatefulView {
     this.#handleFormSubmit(EditPointView.parseStateToPoint(this._state));
   };
 
-  #formCancelHandler = (evt) => {
+  #formDeleteHandler = (evt) => {
     evt.preventDefault();
-    this.#handleCancelClick(EditPointView.parseStateToPoint(this._state));
+    this.#handleDeleteClick(EditPointView.parseStateToPoint(this._state));
   };
 
-  #rollupClickHandler = (evt) => {
-    evt.preventDefault();
-    this.#handleViewClick();
-  };
+  #rollupClickHandler = () => this.#handleViewClick();
 
   #typeChangeHandler = (evt) => {
     this.updateElement({point: {...this._state.point, type: evt.target.value, offers: []}});
