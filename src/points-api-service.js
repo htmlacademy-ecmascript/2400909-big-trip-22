@@ -30,9 +30,8 @@ export default class PointsApiService extends ApiService {
     });
 
     const parsedResponse = await ApiService.parseResponse(response);
-    const adaptedPoint = this.#adaptToClient(parsedResponse);
 
-    return adaptedPoint;
+    return parsedResponse;
   }
 
   // async addPoint(point) {
@@ -55,29 +54,12 @@ export default class PointsApiService extends ApiService {
   //   return response;
   // }
 
-  #adaptToClient(point) {
-    const adaptedPoint = {
-      ...point,
-      basePrice: point['base_prise'],
-      dateFrom: point['date_from'],
-      dateTo: point['date_to'],
-      isFavorite: point['is_favorite'],
-    };
-
-    delete adaptedPoint['base_prise'];
-    delete adaptedPoint['date_from'];
-    delete adaptedPoint['date_to'];
-    delete adaptedPoint['is_favorite'];
-
-    return adaptedPoint;
-  }
-
   #adaptToServer(point) {
     const adaptedPoint = {
       ...point,
       'base_prise': point.basePrice,
-      'date_from': point.dateFrom,
-      'date_to': point.dateTo,
+      'date_from': point.dateFrom instanceof Date ? point.dateFrom.toISOString() : null, // на сервере дата хранится в ISO формате
+      'date_to': point.dateTo instanceof Date ? point.dateTo.toISOString() : null,
       'is_favorite': point.isFavorite,
     };
 
