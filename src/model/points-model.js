@@ -1,13 +1,14 @@
-import { getRandomPoint } from '../mock/points.js';
+// import { getRandomPoint } from '../mock/points.js';
 import { mockOffers } from '../mock/offers.js';
 import { mockDestinations } from '../mock/destinations.js';
+import { mockPoints } from '../mock/points.js';
 import Observable from '../framework/observable.js';
 
-const POINT_COUNT = 5;
+// const POINT_COUNT = 5;
 
 export default class PointsModel extends Observable {
   #pointsApiService = null;
-  #points = Array.from({length: POINT_COUNT}, getRandomPoint);
+  #points = mockPoints;
   #offers = mockOffers;
   #destinations = mockDestinations;
 
@@ -70,7 +71,6 @@ export default class PointsModel extends Observable {
 
     this.#points = [
       ...this.#points.slice(0, index),
-      update,
       ...this.#points.slice(index + 1),
     ];
 
