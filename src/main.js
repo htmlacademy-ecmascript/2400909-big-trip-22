@@ -45,5 +45,5 @@ function handleNewTaskButtonClick() {
 
 filterPresenter.init();
 tripListPresenter.init();
-pointsModel.init();
+pointsModel.init(); //нужно ли добавлять функцию finally()
 
