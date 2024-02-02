@@ -1,8 +1,9 @@
 import SortView from '../view/list-sort-view.js';
 import ListView from '../view/list-view.js';
-import NewEventButtonView from '../view/button-new-event.js';
+//import NewEventButtonView from '../view/button-new-event.js';
 import { render, RenderPosition, remove } from '../framework/render.js';
 import NoEventView from '../view/list-empty-view.js';
+import LoadingView from '../view/loading-view.js';
 import PointPresenter from './point-presenter.js';
 import NewEventPresenter from './new-event-presenter.js';
 import { FilterType, SortType, UserAction, UpdateType } from '../const.js';
@@ -20,6 +21,7 @@ export default class TripPresenter {
   #sortComponent = null;
   //#buttonNewPoint = new NewEventButtonView();
   #noEventComponent = null;
+  #loadingComponent = new LoadingView();
   //#pointEdit = null;
 
   //#boardPoints = [];
@@ -29,6 +31,7 @@ export default class TripPresenter {
   #newEventPresenter = null;
   #filterType = FilterType.EVERYTHING;
   #currentSortType = SortType.DAY;
+  #isLoading = true;
   //#sourcedBoardPoints = [];
 
   constructor({listContainer, pointsModel, filterModel, onNewEventDestroy}) {
@@ -120,6 +123,11 @@ export default class TripPresenter {
         this.#clearBoard({resetSortType: true});
         this.#renderBoard();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderBoard();
+        break;
     }
   };
 
@@ -161,6 +169,10 @@ export default class TripPresenter {
     this.points.forEach((point) => this.#renderPoint(point, this.#offersList, this.#destinationsList));
   }
 
+  #renderLoading() {
+    render(this.#loadingComponent, this.#listComponent.element, RenderPosition.AFTERBEGIN);
+  }
+
   #renderNoEvents() {
     this.#noEventComponent = new NoEventView({
       filterType: this.#filterType
@@ -169,67 +181,13 @@ export default class TripPresenter {
     render(this.#noEventComponent, this.#listComponent.element, RenderPosition.AFTERBEGIN);
   }
 
-  //объект для фильтров
-  /* #filterPoints(filterType) {
-    // 2. Этот исходный массив задач необходим,
-    // потому что для сортировки мы будем мутировать
-    // массив в свойстве _boardTasks
-
-    // 3. А когда пользователь захочет "вернуть всё, как было",
-    // мы просто запишем в _boardTasks исходный массив
-    //this.#boardPoints = [...this.#sourcedBoardPoints];
-
-    this.#filterType = filterType;
-  } */
-
-  /* renderFilters() {
-    this.#filterComponent = new FilterView({onFilterChange: this.#handleFilterTypeChange});
-    render(this.#filterComponent, this.#filterContainer, RenderPosition.AFTERBEGIN);
-  } */
-
-  /* #removeFilter() {
-    remove(this.#filterComponent);
-  } */
-
-  /* #handleFilterTypeChange = (filterType) => {
-    // - сортируем задачи
-    if (this.#filterType === filterType) {
-      return;
-    }
-
-    this.#filterPoints(filterType);
-    // - очищаем список
-    this.#clearBoard();
-    // - рендерим список заново
-    this.#renderBoard();
-    //this.#removeFilter();
-    //this.#renderFilters();
-  }; */
-  /* #renderButtonNewPoint() {
-    render(this.#buttonNewPoint, this.#listComponent.element, RenderPosition.AFTERBEGIN);
-  }
- */
-  /*   #renderEditPoint() {
-    this.#pointEdit = new EditPointView({point: this.#boardPoints[0], offersByType: this.#offersList, destinations: this.#destinationsList});
-    render(this.#pointEdit, this.#listComponent.element);
-
-    for (let i = 1; i < this.#boardPoints.length; i++) {
-      const offersForPoint = this.#offersList.find((offer) => offer.type === this.#boardPoints[i].type).offers;
-      render(this.#renderPoint({point: this.#boardPoints[i], offers: offersForPoint}));
-    }
-  } */
-
-  /*  #clearPointList() {
-    this.#pointPresenter.forEach((presenter) => presenter.destroy());
-    this.#pointPresenter.clear();
-  } */
-
   #clearBoard({resetSortType = false} = {}) {
     this.#pointPresenter.forEach((presenter) => presenter.destroy());
     this.#pointPresenter.clear();
 
     remove(this.#sortComponent);
-    remove(this.#noEventComponent);
+    //remove(this.#noEventComponent);
+    remove(this.#loadingComponent);
 
     if(this.#noEventComponent) {
       remove(this.#noEventComponent);
@@ -243,6 +201,12 @@ export default class TripPresenter {
   #renderBoard() {
     render(this.#listComponent, this.#listContainer);
 
+    //отрисовка заглушки при загрузки данных с сервера
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     //условие отрисовки заглушки при остутствии точек маршрута
     if (this.points.length === 0) {
       this.#renderNoEvents();
@@ -250,9 +214,6 @@ export default class TripPresenter {
     }
 
     this.#renderSort();
-    //this.#renderFilters();
     this.#renderPoints(); // TODO: замена на render(this.#taskListComponent, this.#boardComponent.element);
-    //this.#renderEditPoint();
-    //this.#renderButtonNewPoint();
   }
 }
