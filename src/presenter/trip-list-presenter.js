@@ -1,6 +1,6 @@
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import SortView from '../view/list-sort-view.js';
 import ListView from '../view/list-view.js';
-//import NewEventButtonView from '../view/button-new-event.js';
 import { render, RenderPosition, remove } from '../framework/render.js';
 import NoEventView from '../view/list-empty-view.js';
 import LoadingView from '../view/loading-view.js';
@@ -8,23 +8,21 @@ import PointPresenter from './point-presenter.js';
 import NewEventPresenter from './new-event-presenter.js';
 import { FilterType, SortType, UserAction, UpdateType } from '../const.js';
 import { filter, sortByPrice, sortByTime } from '../utils/filter.js';
-//import EditPointView from '../view/edit-point-view.js';
-//import FilterView from '../view/list-filter-view.js';
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class TripPresenter {
   #listContainer = null;
   #pointsModel = null;
   #filterModel = null;
-  //#filterContainer = null;
   #listComponent = new ListView();
-  //#filterComponent = null;
   #sortComponent = null;
-  //#buttonNewPoint = new NewEventButtonView();
   #noEventComponent = null;
   #loadingComponent = new LoadingView();
-  //#pointEdit = null;
 
-  //#boardPoints = [];
   #offersList = [];
   #destinationsList = [];
   #pointPresenter = new Map();
@@ -32,11 +30,13 @@ export default class TripPresenter {
   #filterType = FilterType.EVERYTHING;
   #currentSortType = SortType.DAY;
   #isLoading = true;
-  //#sourcedBoardPoints = [];
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT,
+  });
 
   constructor({listContainer, pointsModel, filterModel, onNewEventDestroy}) {
     this.#listContainer = listContainer;
-    //this.#filterContainer = filterContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
 
@@ -89,6 +89,7 @@ export default class TripPresenter {
   };
 
   #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
     // Здесь будем вызывать обновление модели.
     // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
     // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
@@ -119,6 +120,8 @@ export default class TripPresenter {
         }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
