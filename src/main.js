@@ -1,21 +1,41 @@
 import TripPresenter from './presenter/trip-list-presenter.js';
 import PointsModel from './model/points-model.js';
-//import { generateFilter } from './mock/filter.js';
-//import { generateSort } from './mock/filter.js';
-//import { render } from './framework/render.js';
-//import FilterView from './view/list-filter-view.js';
-//import SortView from './view/list-sort-view.js';
+import FilterModel from './model/filter-model.js';
+import FilterPresenter from './presenter/filter-presenter.js';
+import NewEventButtonView from './view/button-new-event.js';
 
 const listContainer = document.querySelector('.trip-events');
 const filterContainer = document.querySelector('.trip-controls__filters');
 
 const pointsModel = new PointsModel();
-const tripListPresenter = new TripPresenter({listContainer, filterContainer, pointsModel});
+const filterModel = new FilterModel();
+const tripListPresenter = new TripPresenter({
+  listContainer,
+  pointsModel,
+  filterModel,
+  onNewEventDestroy: handleNewEventFormClose,
+});
 
-//const filters = generateFilter(pointsModel.points);
-//const sorts = generateSort(pointsModel.points);
+const filterPresenter = new FilterPresenter({
+  filterContainer,
+  filterModel,
+  pointsModel,
+});
 
-//render(new FilterView({filters}), filterContainer);
-//render(new SortView({sorts}), listContainer);
+const newEventButtonComponent = new NewEventButtonView({
+  onClick: handleNewTaskButtonClick
+});
 
+function handleNewEventFormClose() {
+  newEventButtonComponent.element.disabled = false;
+}
+
+function handleNewTaskButtonClick() {
+  tripListPresenter.createPoint();
+  newEventButtonComponent.element.disabled = true;
+}
+
+//render(newEventButtonComponent, siteHeader);
+
+filterPresenter.init();
 tripListPresenter.init();
