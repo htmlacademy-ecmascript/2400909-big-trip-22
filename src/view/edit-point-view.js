@@ -300,10 +300,7 @@ export default class EditPointView extends AbstractStatefulView {
     this.#handleDeleteClick(EditPointView.parseStateToPoint(this._state));
   };
 
-  #rollupClickHandler = (evt) => {
-    evt.preventDefault();
-    this.#handleViewClick();
-  };
+  #rollupClickHandler = () => this.#handleViewClick();
 
   #typeChangeHandler = (evt) => {
     this.updateElement({point: {...this._state.point, type: evt.target.value, offers: []}});

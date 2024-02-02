@@ -47,6 +47,7 @@ export default class PointPresenter {
       point: this.#point,
       offersByType: this.#offers,
       destinations: this.#destinations,
+      onViewClick: this.#handleViewClick,
       onFormSubmit: this.#handleFormSubmit,
       onDeleteClick: this.#handleDeleteClick,
     });
@@ -122,6 +123,10 @@ export default class PointPresenter {
 
   #handleEditClick = () => {
     this.#replacePointToForm();
+  };
+
+  #handleViewClick = () => {
+    this.#replaceFormToPoint();
   };
 
   #handleFavoriteClick = () => {
