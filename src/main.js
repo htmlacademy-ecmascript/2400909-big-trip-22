@@ -45,3 +45,5 @@ function handleNewTaskButtonClick() {
 
 filterPresenter.init();
 tripListPresenter.init();
+pointsModel.init();
+
