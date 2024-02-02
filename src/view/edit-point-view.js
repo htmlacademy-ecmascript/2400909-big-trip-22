@@ -62,16 +62,16 @@ function createTypeTemplate(point, currentDestination, destinations) {
   );
 }
 
-function createDateTemplate(point) {
+function createDateTemplate(point, isDisabled) {
   const {dateFrom, dateTo, id} = point;
 
   return (
     `
       <label class="visually-hidden" for="event-start-time-${id}">From</label>
-      <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${dayjs(dateFrom).format('DD/MM/YY h:mm')}">
+      <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${dayjs(dateFrom).format('DD/MM/YY h:mm')}" ${isDisabled ? 'disabled' : ''}>
       &mdash;
       <label class="visually-hidden" for="event-end-time-${id}">To</label>
-      <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${dayjs(dateTo).format('DD/MM/YY h:mm')}">
+      <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${dayjs(dateTo).format('DD/MM/YY h:mm')}" ${isDisabled ? 'disabled' : ''}>
     `
   );
 }
