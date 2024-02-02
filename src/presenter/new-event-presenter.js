@@ -1,6 +1,5 @@
 import { remove, render, RenderPosition } from '../framework/render';
 import EditPointView from '../view/edit-point-view';
-import { nanoid } from 'nanoid';
 import { UserAction, UpdateType } from '../const';
 import { getEmptyPoint } from '../utils/point';
 
@@ -56,13 +55,19 @@ export default class NewEventPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
+  setSaving() {
+    this.#pointEditComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
   #handleFormSubmit = (point) => {
     this.#handleDataChange(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
       point,
     );
-    this.destroy();
   };
 
   #handleDeleteClick = () => {
