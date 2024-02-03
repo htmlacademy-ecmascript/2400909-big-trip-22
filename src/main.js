@@ -41,9 +41,8 @@ function handleNewTaskButtonClick() {
   newEventButtonComponent.element.disabled = true;
 }
 
-//render(newEventButtonComponent, siteHeader);
-
-filterPresenter.init();
-tripListPresenter.init();
-pointsModel.init(); //нужно ли добавлять функцию finally()
+pointsModel.init(() => {
+  filterPresenter.init();
+  tripListPresenter.init();
+});
 
