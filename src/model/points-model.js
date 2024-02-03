@@ -9,7 +9,6 @@ export default class PointsModel extends Observable {
   constructor({pointsApiService}) {
     super();
     this.#pointsApiService = pointsApiService;
-
   }
 
   get points() {
@@ -24,12 +23,20 @@ export default class PointsModel extends Observable {
     return this.#destinations;
   }
 
-  async init() {
+  async init(callback) {
     try {
       const points = await this.#pointsApiService.points;
       this.#points = points.map(this.#adaptToClient);
+      const offers = await this.#pointsApiService.offers;
+      this.#offers = offers.map(this.#adaptToClient);
+      const destinations = await this.#pointsApiService.destinations;
+      this.#destinations = destinations.map(this.#adaptToClient);
     } catch(err) {
       this.#points = [];
+      this.#offers = [];
+      this.#destinations = [];
+    } finally {
+      callback();
     }
 
     this._notify(UpdateType.INIT);
@@ -89,13 +96,13 @@ export default class PointsModel extends Observable {
   #adaptToClient(point) {
     const adaptedPoint = {
       ...point,
-      basePrice: point['base_prise'],
+      basePrice: point['base_price'],
       dateFrom: point['date_from'] !== null ? new Date(point['date_from']) : point['date_from'], //на клиенте дата хранится как экземпляр Date
       dateTo: point['date_to'] !== null ? new Date(point['date_to']) : point['date_to'],
       isFavorite: point['is_favorite'],
     };
 
-    delete adaptedPoint['base_prise'];
+    delete adaptedPoint['base_price'];
     delete adaptedPoint['date_from'];
     delete adaptedPoint['date_to'];
     delete adaptedPoint['is_favorite'];

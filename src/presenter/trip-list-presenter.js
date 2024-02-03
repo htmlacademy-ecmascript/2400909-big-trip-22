@@ -66,13 +66,8 @@ export default class TripPresenter {
   }
 
   init() {
-    //this.#boardPoints = [...this.#pointsModel.points];
     this.#offersList = [...this.#pointsModel.offers];
     this.#destinationsList = [...this.#pointsModel.destinations];
-    // 1. В отличии от сортировки по любому параметру,
-    // исходный порядок можно сохранить только одним способом -
-    // сохранив исходный массив:
-    //this.#sourcedBoardPoints = [...this.#pointsModel.points];
 
     this.#renderBoard();
   }
@@ -204,7 +199,6 @@ export default class TripPresenter {
     this.#pointPresenter.clear();
 
     remove(this.#sortComponent);
-    //remove(this.#noEventComponent);
     remove(this.#loadingComponent);
 
     if(this.#noEventComponent) {

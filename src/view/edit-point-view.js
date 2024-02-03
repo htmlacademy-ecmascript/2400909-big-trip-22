@@ -85,7 +85,7 @@ function createPriceTemplate(point) {
         <span class="visually-hidden">Price</span>
         &euro;
       </label>
-      <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${basePrice}">
+      <input type="number" class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${basePrice}">
     `
   );
 }
@@ -149,7 +149,12 @@ function createOfferTemplate(point, offersByType) {
           return (
             `
             <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title}-${offer.id}" type="checkbox" name="event-offer-${offer.title}" ${checked}>
+              <input
+                class="event__offer-checkbox  visually-hidden"
+                id="event-offer-${offer.title}-${offer.id}"
+                type="checkbox"
+                name="event-offer-${offer.title}" ${checked}
+                data-offer-id=${offer.id}>
               <label class="event__offer-label" for="event-offer-${offer.title}-${offer.id}">
                 <span class="event__offer-title">${upTitle(offer.title)}</span>
                 &plus;&euro;&nbsp;
@@ -203,8 +208,8 @@ function createEditPointTemplate(point, offersByType, destinations) {
          ${createPriceTemplate(point)}
         </div>
 
-        ${createSaveButton()}
-        ${createResetButton(point.id)}
+        ${createSaveButton(point)}
+        ${createResetButton(point)}
         ${createRollupButton(point.id)}
       </header>
       <section class="event__details">
@@ -292,12 +297,12 @@ export default class EditPointView extends AbstractStatefulView {
 
   #formSubmitHadler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(EditPointView.parseStateToPoint(this._state));
+    this.#handleFormSubmit(EditPointView.parseStateToPoint(this._state.point));
   };
 
   #formDeleteHandler = (evt) => {
     evt.preventDefault();
-    this.#handleDeleteClick(EditPointView.parseStateToPoint(this._state));
+    this.#handleDeleteClick(EditPointView.parseStateToPoint(this._state.point));
   };
 
   #rollupClickHandler = () => this.#handleViewClick();
@@ -315,12 +320,12 @@ export default class EditPointView extends AbstractStatefulView {
   #offerChangeHandler = () => {
     const checkedBoxes = Array.from(this.element.querySelectorAll('.event__offer-checkbox:checked'));
 
-    this._setState({point: {...this._state.point, offers: checkedBoxes.map((element) => element.dataset.offersByType)}});
+    this._setState({point: {...this._state.point, offers: checkedBoxes.map((element) => element.dataset.offerId)}});
   };
 
   #priceInputHandler = (evt) => {
     evt.preventDefault();
-    this._setState({point: {...this._state.point, basePrice: evt.target.valueAsNumber}});
+    this._setState({point: {...this._state.point, basePrice: Number(evt.target.value)}});
   };
 
   #dateFromCloseHandler = ([userDate]) => {
