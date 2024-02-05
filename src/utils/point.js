@@ -38,6 +38,12 @@ export const getEmptyPoint = () => ({
   type: TYPES[0],
 });
 
+const convertDate = (date, format) => date ? dayjs(date).format(format) : '';
+
+export const getMinDate = (items) => convertDate(dayjs.min(items.map((item) => dayjs(item))), DATE_FORMAT);
+
+export const getMaxDate = (items) => convertDate(dayjs.max(items.map((item) => dayjs(item))), DATE_FORMAT);
+
 
 // Функция помещает задачи без даты в конце списка,
 // возвращая нужный вес для колбэка sort
