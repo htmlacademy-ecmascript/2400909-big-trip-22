@@ -12,9 +12,9 @@ function createListDestinationsTemplate(destinations, id) {
 
   return (
     `<datalist id="destination-list-${id}">
-        ${destinations.map((destination) => (
-          `<option value="${destination.name}"></option>`
-        )).join('')}
+    ${destinations.map((destination) => (
+      `<option value="${destination.name}"></option>`
+    )).join('')}
       </datalist>`
   );
 }
@@ -22,10 +22,6 @@ function createListDestinationsTemplate(destinations, id) {
 function createTypeTemplate(point, currentDestination, destinations) {
   const {id, type} = point;
   const {name} = currentDestination || {name: ''};
-
-  /* if (!currentDestination) {
-    return '';
-  } */
 
   return (
     `<div class="event__type-wrapper">
@@ -39,12 +35,12 @@ function createTypeTemplate(point, currentDestination, destinations) {
         <fieldset class="event__type-group">
           <legend class="visually-hidden">Event type</legend>
 
-       ${TYPES.map((eventType) => (
-          `<div class="event__type-item">
+    ${TYPES.map((eventType) => (
+      `<div class="event__type-item">
           <input id="event-type-${eventType}-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}">
           <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-${id}">${upTitle(eventType)}</label>
           </div>`
-        )).join('')}
+    )).join('')}
 
         </fieldset>
       </div>
@@ -68,16 +64,16 @@ function createDateTemplate(point, isDisabled) {
   return (
     `
       <label class="visually-hidden" for="event-start-time-${id}">From</label>
-      <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${dayjs(dateFrom).format('DD/MM/YY h:mm')}" ${isDisabled ? 'disabled' : ''}>
+      <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${dayjs(dateFrom).format('DD/MM/YY h:mm')}" ${isDisabled ? 'disabled="disabled"' : ''}>
       &mdash;
       <label class="visually-hidden" for="event-end-time-${id}">To</label>
-      <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${dayjs(dateTo).format('DD/MM/YY h:mm')}" ${isDisabled ? 'disabled' : ''}>
+      <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${dayjs(dateTo).format('DD/MM/YY h:mm')}" ${isDisabled ? 'disabled="disabled"' : ''}>
     `
   );
 }
 
-function createPriceTemplate(point) {
-  const {basePrice, id} = point;
+function createPriceTemplate(state) {
+  const {basePrice, id} = state;
 
   return (
     `
@@ -90,21 +86,21 @@ function createPriceTemplate(point) {
   );
 }
 
-function createSaveButton(point) {
-  const {isDisabled, isSaving} = point;
+function createSaveButton(state) {
+  const {isDisabled, isSaving} = state;
 
   return (
     `<button
       class="event__save-btn btn btn--blue"
       type="submit"
-      ${isDisabled ? 'disabled' : ''}>
+      ${isDisabled ? 'disabled="disabled"' : ''}>
       ${isSaving ? 'Saving...' : 'Save'}
     </button>`
   );
 }
 
-function createResetButton(point) {
-  const {isDisabled, isDeleting} = point;
+function createResetButton(point, state) {
+  const {isDisabled, isDeleting} = state;
   const pointId = point.id || 0;
 
   const setButtonValue = () => {
@@ -119,7 +115,7 @@ function createResetButton(point) {
     `<button
       class="event__reset-btn"
       type="reset"
-      ${isDisabled ? 'disabled' : ''}>
+      ${isDisabled ? 'disabled="disabled"' : ''}>
       ${setButtonValue()}
     </button>`
   );
@@ -143,11 +139,11 @@ function createOfferTemplate(point, offersByType) {
   if (pointTypeOffer.length !== 0) {
     return (
       `<div class="event__available-offers">
-        ${pointTypeOffer.offers.map((offer) => {
-          const checked = point.offers.includes(offer.id) ? 'checked' : '';
+      ${pointTypeOffer.offers.map((offer) => {
+        const checked = point.offers.includes(offer.id) ? 'checked' : '';
 
-          return (
-            `
+        return (
+          `
             <div class="event__offer-selector">
               <input
                 class="event__offer-checkbox  visually-hidden"
@@ -161,9 +157,9 @@ function createOfferTemplate(point, offersByType) {
                 <span class="event__offer-price">${offer.price}</span>
               </label>
             </div>`
-          );
-        }).join('')
-        }
+        );
+      }).join('')
+      }
       </div>`
     );
   }
@@ -192,7 +188,7 @@ function createDestinationTemplate(currentDestination) {
   );
 }
 
-function createEditPointTemplate(point, offersByType, destinations) {
+function createEditPointTemplate(point, offersByType, destinations, state) {
   const currentDestination = destinations.find((dest) => dest.id === point.destination);
   return (
     `<li class="trip-events__item">
@@ -201,15 +197,15 @@ function createEditPointTemplate(point, offersByType, destinations) {
         ${createTypeTemplate(point, currentDestination, destinations)}
 
         <div class="event__field-group  event__field-group--time">
-          ${createDateTemplate(point)}
+          ${createDateTemplate(point, state)}
         </div>
 
         <div class="event__field-group  event__field-group--price">
          ${createPriceTemplate(point)}
         </div>
 
-        ${createSaveButton(point)}
-        ${createResetButton(point)}
+        ${createSaveButton(state)}
+        ${createResetButton(point, state)}
         ${createRollupButton(point.id)}
       </header>
       <section class="event__details">
@@ -250,7 +246,7 @@ export default class EditPointView extends AbstractStatefulView {
   }
 
   get template() {
-    return createEditPointTemplate(this._state.point, this.#offersByType, this.#destinations);
+    return createEditPointTemplate(this._state.point, this.#offersByType, this.#destinations, this._state);
   }
 
   //перегружаем метод родителя removeElement
@@ -386,5 +382,4 @@ export default class EditPointView extends AbstractStatefulView {
 
     return point;
   }
-
 }

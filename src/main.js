@@ -41,6 +41,9 @@ function handleNewTaskButtonClick() {
   newEventButtonComponent.element.disabled = true;
 }
 
+filterPresenter.init();
+tripListPresenter.init();
+
 pointsModel.init(() => {
   filterPresenter.init();
   tripListPresenter.init();
