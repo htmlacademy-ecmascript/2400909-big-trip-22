@@ -20,7 +20,7 @@ function createSortTemplate(currentSortType) {
         type="radio"
         name="trip-sort"
         data-sort-type="${SortType.EVENT}"
-        value="sort-${SortType.EVENT}" ${SortType.EVENT === currentSortType ? 'checked' : ''}>
+        value="sort-${SortType.EVENT}" ${SortType.EVENT === currentSortType ? 'checked' : ''} disabled>
         <label class="trip-sort__btn" for="sort-${SortType.EVENT}">${SortType.EVENT}</label>
       </div>
 
@@ -50,7 +50,7 @@ function createSortTemplate(currentSortType) {
         type="radio"
         name="trip-sort"
         data-sort-type="${SortType.OFFERS}"
-        value="sort-${SortType.OFFERS}" ${SortType.OFFERS === currentSortType ? 'checked' : ''}>
+        value="sort-${SortType.OFFERS}" ${SortType.OFFERS === currentSortType ? 'checked' : ''} disabled>
         <label class="trip-sort__btn" for="sort-${SortType.OFFERS}">${SortType.OFFERS}</label>
       </div>
     </form>`

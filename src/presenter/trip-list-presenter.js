@@ -4,10 +4,11 @@ import ListView from '../view/list-view.js';
 import { render, RenderPosition, remove } from '../framework/render.js';
 import NoEventView from '../view/list-empty-view.js';
 import LoadingView from '../view/loading-view.js';
+import ErrorView from '../view/error-view.js';
 import PointPresenter from './point-presenter.js';
 import NewEventPresenter from './new-event-presenter.js';
 import { FilterType, SortType, UserAction, UpdateType } from '../const.js';
-import { filter, sortByPrice, sortByTime } from '../utils/filter.js';
+import { filter, sortByDate, sortByPrice, sortByTime } from '../utils/filter.js';
 
 const TimeLimit = {
   LOWER_LIMIT: 350,
@@ -56,6 +57,8 @@ export default class TripPresenter {
     const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType) {
+      case SortType.DAY:
+        return filteredPoints.sort(sortByDate('dateFrom'));
       case SortType.TIME:
         return filteredPoints.sort(sortByTime);
       case SortType.PRICE:
@@ -171,7 +174,7 @@ export default class TripPresenter {
 
   #renderSort() {
     this.#sortComponent = new SortView({onSortTypeChange: this.#handleSortTypeChange, currentSortType: this.#currentSortType});
-    render(this.#sortComponent, this.#listComponent.element, RenderPosition.AFTERBEGIN);
+    render(this.#sortComponent, this.#listContainer, RenderPosition.AFTERBEGIN);
   }
 
   #removeSort() {
@@ -186,6 +189,10 @@ export default class TripPresenter {
     render(this.#loadingComponent, this.#listComponent.element, RenderPosition.AFTERBEGIN);
   }
 
+  #renderError() {
+    render(new ErrorView(), this.#listComponent.element, RenderPosition.AFTERBEGIN);
+  }
+
   #renderNoEvents() {
     this.#noEventComponent = new NoEventView({
       filterType: this.#filterType
@@ -197,6 +204,7 @@ export default class TripPresenter {
   #clearBoard({resetSortType = false} = {}) {
     this.#pointPresenter.forEach((presenter) => presenter.destroy());
     this.#pointPresenter.clear();
+    this.#newEventPresenter.destroy();
 
     remove(this.#sortComponent);
     remove(this.#loadingComponent);
@@ -219,6 +227,11 @@ export default class TripPresenter {
       return;
     }
 
+    if (this.#pointsModel.isError) {
+      this.#renderError();
+      return;
+    }
+
     //условие отрисовки заглушки при остутствии точек маршрута
     if (this.points.length === 0) {
       this.#renderNoEvents();
@@ -226,6 +239,6 @@ export default class TripPresenter {
     }
 
     this.#renderSort();
-    this.#renderPoints(); // TODO: замена на render(this.#taskListComponent, this.#boardComponent.element);
+    this.#renderPoints();
   }
 }

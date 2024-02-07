@@ -11,9 +11,7 @@ export function humanizePointDate(dueDate) {
 //функция подсчёта длительности от даты начала и конца
 export function calculateDuration(startDate, endDate) {
   const daysDiff = dayjs(endDate).diff(startDate, 'd');
-  // eslint-disable-next-line no-undef
   const hoursDiff = dayjs(dayjs(endDate).subtract(daysDiff, 'day')).diff(startDate, 'h');
-  // eslint-disable-next-line no-undef
   const minutesDiff = dayjs(dayjs(endDate).subtract(daysDiff, 'day').subtract(hoursDiff, 'hour')).diff(startDate, 'm');
 
   if (daysDiff === 0) {
@@ -38,34 +36,8 @@ export const getEmptyPoint = () => ({
   type: TYPES[0],
 });
 
+const convertDate = (date, format) => date ? dayjs(date).format(format) : '';
 
-// Функция помещает задачи без даты в конце списка,
-// возвращая нужный вес для колбэка sort
-/* function getWeightForNullDate(dateA, dateB) {
-  if (dateA === null && dateB === null) {
-    return 0;
-  }
+export const getMinDate = (items) => convertDate(dayjs.min(items.map((item) => dayjs(item))), DATE_FORMAT);
 
-  if (dateA === null) {
-    return 1;
-  }
-
-  if (dateB === null) {
-    return -1;
-  }
-
-  return null;
-}
-
-function sortTaskUp(taskA, taskB) {
-  const weight = getWeightForNullDate(taskA.dueDate, taskB.dueDate);
-
-  return weight ?? dayjs(taskA.dueDate).diff(dayjs(taskB.dueDate));
-}
-
-function sortTaskDown(taskA, taskB) {
-  const weight = getWeightForNullDate(taskA.dueDate, taskB.dueDate);
-
-  return weight ?? dayjs(taskB.dueDate).diff(dayjs(taskA.dueDate));
-}
- */
+export const getMaxDate = (items) => convertDate(dayjs.max(items.map((item) => dayjs(item))), DATE_FORMAT);
