@@ -33,6 +33,9 @@
     "@babel/core": "7.21.4",
     "copy-webpack-plugin": "11.0.0",
     "dayjs": "1.11.7",
-    "html-webpack-plugin": "5.5.1"
+    "flatpickr": "4.6.13",
+    "he": "1.2.0",
+    "html-webpack-plugin": "5.5.1",
+    "nanoid": "5.0.4"
   }
 }
