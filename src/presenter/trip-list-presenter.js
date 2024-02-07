@@ -239,6 +239,6 @@ export default class TripPresenter {
     }
 
     this.#renderSort();
-    this.#renderPoints(); // TODO: замена на render(this.#taskListComponent, this.#boardComponent.element);
+    this.#renderPoints();
   }
 }
