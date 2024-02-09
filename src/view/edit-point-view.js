@@ -64,10 +64,10 @@ function createDateTemplate(point, isDisabled) {
   return (
     `
       <label class="visually-hidden" for="event-start-time-${id}">From</label>
-      <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${dayjs(dateFrom).format('DD/MM/YY h:mm')}" ${isDisabled ? 'disabled="disabled"' : ''}>
+      <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${dayjs(dateFrom).format('DD/MM/YY h:mm')}" ${isDisabled ? 'disabled' : ''}>
       &mdash;
       <label class="visually-hidden" for="event-end-time-${id}">To</label>
-      <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${dayjs(dateTo).format('DD/MM/YY h:mm')}" ${isDisabled ? 'disabled="disabled"' : ''}>
+      <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${dayjs(dateTo).format('DD/MM/YY h:mm')}" ${isDisabled ? 'disabled' : ''}>
     `
   );
 }
@@ -197,7 +197,7 @@ function createEditPointTemplate(point, offersByType, destinations, state) {
         ${createTypeTemplate(point, currentDestination, destinations)}
 
         <div class="event__field-group  event__field-group--time">
-          ${createDateTemplate(point, state)}
+          ${createDateTemplate(point)}
         </div>
 
         <div class="event__field-group  event__field-group--price">
