@@ -23,25 +23,6 @@ export default class FilterPresenter {
 
     const points = this.#pointsModel.points;
     return Object.values(FilterType).map((type) => ({type, count: filter[type](points).length}));
-
-    // return [
-    //   {
-    //     type: FilterType.EVERYTHING,
-    //     name: 'EVERYTHING',
-    //   },
-    //   {
-    //     type: FilterType.FUTURE,
-    //     name: 'FUTURE',
-    //   },
-    //   {
-    //     type: FilterType.PRESENT,
-    //     name: 'PRESENT',
-    //   },
-    //   {
-    //     type: FilterType.PAST,
-    //     name: 'PAST',
-    //   },
-    // ];
   }
 
   init() {
