@@ -274,7 +274,7 @@ export default class EditPointView extends AbstractStatefulView {
   //HANDLERS
   _restoreHandlers = () => {
     this.element.querySelector('form')
-      .addEventListener('submit', this.#formSubmitHadler);
+      .addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn')
       ?.addEventListener('click', this.#rollupClickHandler);
     this.element.querySelector('.event__type-group')
@@ -291,7 +291,7 @@ export default class EditPointView extends AbstractStatefulView {
     this.#setDatepickers();
   };
 
-  #formSubmitHadler = (evt) => {
+  #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this.#handleFormSubmit(EditPointView.parseStateToPoint(this._state.point));
   };
